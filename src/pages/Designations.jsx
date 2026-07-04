@@ -1,0 +1,48 @@
+import { z } from 'zod';
+import { designationService } from '@/services/modules';
+import { formatDate } from '@/utils/formatters';
+import ResourcePage from '@/components/common/ResourcePage';
+import Badge from '@/components/common/Badge';
+
+const schema = z.object({
+  title: z.string().min(2, 'Title is required'),
+  department: z.string().optional().or(z.literal('')),
+  level: z.coerce.number().min(1, 'Level must be at least 1').max(15),
+  description: z.string().max(300).optional().or(z.literal('')),
+});
+
+const columns = [
+  {
+    accessorKey: 'title',
+    header: 'Designation',
+    cell: ({ getValue }) => <span className="font-medium text-surface-900 dark:text-surface-100">{getValue()}</span>,
+  },
+  { accessorKey: 'department', header: 'Department', cell: ({ getValue }) => getValue() || '—' },
+  {
+    accessorKey: 'level',
+    header: 'Level',
+    cell: ({ getValue }) => <Badge color="primary">L{getValue()}</Badge>,
+  },
+  { accessorKey: 'employeeCount', header: 'Employees', cell: ({ getValue }) => getValue() ?? '—' },
+  { accessorKey: 'createdAt', header: 'Created', cell: ({ getValue }) => formatDate(getValue()) },
+];
+
+export default function Designations() {
+  return (
+    <ResourcePage
+      title="Designations"
+      description="Job titles and seniority levels across the organization."
+      service={designationService}
+      queryKey="designations"
+      columns={columns}
+      schema={schema}
+      defaults={{ title: '', department: '', level: 1, description: '' }}
+      fields={[
+        { name: 'title', label: 'Title', required: true, placeholder: 'e.g. Senior Software Engineer' },
+        { name: 'department', label: 'Department', placeholder: 'e.g. Engineering' },
+        { name: 'level', label: 'Level', type: 'number', required: true, hint: '1 (junior) – 15 (executive)' },
+        { name: 'description', label: 'Description', type: 'textarea', colSpan: 2 },
+      ]}
+    />
+  );
+}
