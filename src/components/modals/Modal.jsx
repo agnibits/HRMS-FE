@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { AnimatePresence, motion } from 'framer-motion';
-import { FiX } from 'react-icons/fi';
+import { LuX } from 'react-icons/lu';
 import cn from '@/utils/cn';
 import { IconButton } from '@/components/common/Button';
 
@@ -60,7 +60,7 @@ export function Modal({ isOpen, onClose, title, description, size = 'md', childr
                   </p>
                 )}
               </div>
-              <IconButton icon={FiX} label="Close" size="sm" onClick={onClose} />
+              <IconButton icon={LuX} label="Close" size="sm" onClick={onClose} />
             </div>
             <div className="grow overflow-y-auto px-6 py-5">{children}</div>
             {footer && (

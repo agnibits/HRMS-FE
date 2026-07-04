@@ -1,6 +1,6 @@
 import { Outlet } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FiMoon, FiSun } from 'react-icons/fi';
+import { LuMoon, LuSun } from 'react-icons/lu';
 import { APP_NAME } from '@/constants';
 import { useTheme } from '@/context/ThemeContext';
 import { IconButton } from '@/components/common/Button';
@@ -55,7 +55,7 @@ export function AuthLayout() {
       <div className="relative flex w-full flex-col items-center justify-center bg-surface-50 px-4 py-10 dark:bg-surface-950 lg:w-1/2">
         <div className="absolute right-4 top-4">
           <IconButton
-            icon={theme === 'dark' ? FiSun : FiMoon}
+            icon={theme === 'dark' ? LuSun : LuMoon}
             label="Toggle theme"
             onClick={toggleTheme}
           />

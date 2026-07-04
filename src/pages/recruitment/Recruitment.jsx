@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { z } from 'zod';
-import { FiBriefcase, FiCalendar, FiUsers } from 'react-icons/fi';
+import { LuBriefcaseBusiness, LuCalendarDays, LuUsersRound } from 'react-icons/lu';
 import { jobService, candidateService } from '@/services/modules';
 import { formatDate } from '@/utils/formatters';
 import ResourcePage from '@/components/common/ResourcePage';
@@ -87,7 +87,7 @@ export default function Recruitment() {
         title="Recruitment"
         description="Open positions and your candidate pipeline."
         actions={
-          <Button variant="secondary" leftIcon={FiCalendar} onClick={() => navigate('/recruitment/interviews')}>
+          <Button variant="secondary" leftIcon={LuCalendarDays} onClick={() => navigate('/recruitment/interviews')}>
             Interview Schedule
           </Button>
         }
@@ -95,8 +95,8 @@ export default function Recruitment() {
 
       <Tabs
         tabs={[
-          { key: 'jobs', label: 'Job Openings', icon: FiBriefcase },
-          { key: 'candidates', label: 'Candidates', icon: FiUsers },
+          { key: 'jobs', label: 'Job Openings', icon: LuBriefcaseBusiness },
+          { key: 'candidates', label: 'Candidates', icon: LuUsersRound },
         ]}
       >
         {(active) =>

@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import toast from 'react-hot-toast';
-import { FiEdit2, FiPlus, FiTrash2 } from 'react-icons/fi';
+import { LuPencilLine, LuPlus, LuTrash2 } from 'react-icons/lu';
 
 import { useTableState } from '@/hooks/useTableState';
 import { useDisclosure } from '@/hooks/useDisclosure';
@@ -151,11 +151,11 @@ export function ResourcePage({
               <IconButton key={a.label} icon={a.icon} label={a.label} size="sm" onClick={() => a.onClick(row.original)} />
             ))}
             {canUpdate && (
-              <IconButton icon={FiEdit2} label="Edit" size="sm" onClick={() => openEdit(row.original)} />
+              <IconButton icon={LuPencilLine} label="Edit" size="sm" onClick={() => openEdit(row.original)} />
             )}
             {canDelete && (
               <IconButton
-                icon={FiTrash2}
+                icon={LuTrash2}
                 label="Delete"
                 size="sm"
                 className="hover:text-red-600 dark:hover:text-red-400"
@@ -215,7 +215,7 @@ export function ResourcePage({
             <>
               {headerActions}
               {canCreate && (
-                <Button leftIcon={FiPlus} onClick={openCreate}>
+                <Button leftIcon={LuPlus} onClick={openCreate}>
                   {createLabel || `Add ${title.replace(/s$/, '')}`}
                 </Button>
               )}
@@ -226,7 +226,7 @@ export function ResourcePage({
       {hideHeader && canCreate && (
         <div className="mb-4 flex justify-end gap-2">
           {headerActions}
-          <Button leftIcon={FiPlus} onClick={openCreate}>
+          <Button leftIcon={LuPlus} onClick={openCreate}>
             {createLabel || `Add ${title.replace(/s$/, '')}`}
           </Button>
         </div>
@@ -249,7 +249,7 @@ export function ResourcePage({
         onExportExcel={enableExportServer ? () => service.exportExcel(tableState.queryParams) : undefined}
         bulkActions={
           canDelete
-            ? [{ label: 'Delete selected', icon: FiTrash2, danger: true, onClick: (sel) => deleteModal.open(sel) }]
+            ? [{ label: 'Delete selected', icon: LuTrash2, danger: true, onClick: (sel) => deleteModal.open(sel) }]
             : []
         }
         toolbar={filters.map((flt) => (

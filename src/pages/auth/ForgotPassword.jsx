@@ -5,7 +5,7 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
-import { FiArrowLeft, FiMail } from 'react-icons/fi';
+import { LuArrowLeft, LuMail } from 'react-icons/lu';
 import { authService } from '@/services/authService';
 import { FormInput } from '@/components/forms/fields';
 import Button from '@/components/common/Button';
@@ -28,7 +28,7 @@ export default function ForgotPassword() {
     return (
       <div className="card p-8 text-center">
         <span className="mx-auto mb-4 flex size-12 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 dark:bg-emerald-950/60">
-          <FiMail className="size-6" />
+          <LuMail className="size-6" />
         </span>
         <h1 className="text-xl font-bold text-surface-900 dark:text-surface-50">Check your inbox</h1>
         <p className="mt-2 text-sm text-surface-500 dark:text-surface-400">
@@ -36,7 +36,7 @@ export default function ForgotPassword() {
           we've sent a password reset link. It expires shortly, so use it soon.
         </p>
         <Link to="/login" className="mt-6 inline-flex items-center gap-1.5 text-sm font-medium text-primary-600 hover:underline dark:text-primary-400">
-          <FiArrowLeft className="size-4" /> Back to sign in
+          <LuArrowLeft className="size-4" /> Back to sign in
         </Link>
       </div>
     );
@@ -55,7 +55,7 @@ export default function ForgotPassword() {
         </Button>
       </form>
       <Link to="/login" className="mt-5 flex items-center justify-center gap-1.5 text-sm text-surface-500 hover:text-primary-600">
-        <FiArrowLeft className="size-4" /> Back to sign in
+        <LuArrowLeft className="size-4" /> Back to sign in
       </Link>
     </div>
   );

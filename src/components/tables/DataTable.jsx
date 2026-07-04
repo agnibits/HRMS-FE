@@ -5,8 +5,8 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import {
-  FiChevronDown, FiChevronUp, FiColumns, FiDownload, FiFilter, FiRefreshCw, FiX,
-} from 'react-icons/fi';
+  LuChevronDown, LuChevronUp, LuColumns3, LuDownload, LuListFilter, LuRefreshCw, LuX,
+} from 'react-icons/lu';
 import cn from '@/utils/cn';
 import { exportToCsv, exportToPdf } from '@/utils/exporters';
 import SearchBar from '@/components/common/SearchBar';
@@ -144,7 +144,7 @@ export function DataTable({
           />
           {toolbar}
           {hasActiveFilters && (
-            <Button variant="ghost" size="sm" leftIcon={FiX} onClick={tableState.resetFilters}>
+            <Button variant="ghost" size="sm" leftIcon={LuX} onClick={tableState.resetFilters}>
               Clear
             </Button>
           )}
@@ -152,14 +152,14 @@ export function DataTable({
 
         <div className="flex items-center gap-2">
           {onRetry && (
-            <Button variant="ghost" size="sm" leftIcon={FiRefreshCw} onClick={onRetry} aria-label="Refresh">
+            <Button variant="ghost" size="sm" leftIcon={LuRefreshCw} onClick={onRetry} aria-label="Refresh">
               Refresh
             </Button>
           )}
           <Dropdown
             align="right"
             width="w-56"
-            trigger={<Button variant="secondary" size="sm" leftIcon={FiColumns}>Columns</Button>}
+            trigger={<Button variant="secondary" size="sm" leftIcon={LuColumns3}>Columns</Button>}
             items={table
               .getAllLeafColumns()
               .filter((c) => c.id !== '__select' && c.getCanHide() !== false)
@@ -184,7 +184,7 @@ export function DataTable({
           />
           <Dropdown
             align="right"
-            trigger={<Button variant="secondary" size="sm" leftIcon={FiDownload}>Export</Button>}
+            trigger={<Button variant="secondary" size="sm" leftIcon={LuDownload}>Export</Button>}
             items={exportItems}
           />
         </div>
@@ -228,7 +228,7 @@ export function DataTable({
         <ErrorState error={error} onRetry={onRetry} />
       ) : data.length === 0 ? (
         <EmptyState
-          icon={hasActiveFilters ? FiFilter : undefined}
+          icon={hasActiveFilters ? LuListFilter : undefined}
           title={hasActiveFilters ? 'No matching records' : empty.title || 'No records yet'}
           description={
             hasActiveFilters
@@ -261,9 +261,9 @@ export function DataTable({
                           >
                             {flexRender(header.column.columnDef.header, header.getContext())}
                             {sorted === 'asc' ? (
-                              <FiChevronUp className="size-3.5" />
+                              <LuChevronUp className="size-3.5" />
                             ) : sorted === 'desc' ? (
-                              <FiChevronDown className="size-3.5" />
+                              <LuChevronDown className="size-3.5" />
                             ) : (
                               <span className="size-3.5 opacity-0" />
                             )}

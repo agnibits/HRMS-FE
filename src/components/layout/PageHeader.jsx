@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { FiChevronRight, FiHome } from 'react-icons/fi';
+import { LuChevronRight, LuHouse } from 'react-icons/lu';
 import { titleCase } from '@/utils/formatters';
 
 export function Breadcrumb({ items }) {
@@ -17,12 +17,12 @@ export function Breadcrumb({ items }) {
   return (
     <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-surface-400">
       <Link to="/" className="flex items-center gap-1 hover:text-primary-600 dark:hover:text-primary-400">
-        <FiHome className="size-3.5" />
+        <LuHouse className="size-3.5" />
         Home
       </Link>
       {crumbs.map((c, i) => (
         <span key={c.to || i} className="flex items-center gap-1.5">
-          <FiChevronRight className="size-3" />
+          <LuChevronRight className="size-3" />
           {i === crumbs.length - 1 ? (
             <span className="font-medium text-surface-600 dark:text-surface-300">{c.label}</span>
           ) : (

@@ -1,5 +1,5 @@
 import { useCallback, useRef, useState } from 'react';
-import { FiUploadCloud, FiFile, FiX } from 'react-icons/fi';
+import { LuCloudUpload, LuFile, LuX } from 'react-icons/lu';
 import cn from '@/utils/cn';
 
 /**
@@ -58,7 +58,7 @@ export function FileUpload({
             : 'border-surface-300 hover:border-primary-400 hover:bg-surface-50 dark:border-surface-700 dark:hover:bg-surface-800/50'
         )}
       >
-        <FiUploadCloud className="mb-2 size-8 text-surface-400" />
+        <LuCloudUpload className="mb-2 size-8 text-surface-400" />
         <p className="text-sm font-medium text-surface-700 dark:text-surface-300">{label}</p>
         <p className="mt-1 text-xs text-surface-400">
           {hint || `${accept ? accept.replace(/\./g, '').toUpperCase() : 'Any file type'} · up to ${maxSizeMb} MB`}
@@ -82,7 +82,7 @@ export function FileUpload({
               key={`${f.name}-${i}`}
               className="flex items-center gap-3 rounded-lg border border-surface-200 bg-surface-50 px-3 py-2 dark:border-surface-700 dark:bg-surface-800"
             >
-              <FiFile className="size-4 shrink-0 text-primary-500" />
+              <LuFile className="size-4 shrink-0 text-primary-500" />
               <span className="grow truncate text-sm text-surface-700 dark:text-surface-200">{f.name}</span>
               <span className="shrink-0 text-xs text-surface-400">{(f.size / 1024).toFixed(0)} KB</span>
               <button
@@ -91,7 +91,7 @@ export function FileUpload({
                 onClick={() => removeAt(i)}
                 className="shrink-0 text-surface-400 hover:text-red-500"
               >
-                <FiX className="size-4" />
+                <LuX className="size-4" />
               </button>
             </li>
           ))}

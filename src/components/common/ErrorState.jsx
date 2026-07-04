@@ -1,4 +1,4 @@
-import { FiAlertTriangle, FiLock, FiWifiOff, FiClock } from 'react-icons/fi';
+import { LuTriangleAlert, LuLock, LuWifiOff, LuClock } from 'react-icons/lu';
 import Button from './Button';
 
 /** Renders an API error (normalized by the axios client) with a retry affordance. */
@@ -7,7 +7,7 @@ export function ErrorState({ error, onRetry, className = '' }) {
   const notShipped = status === 404;
 
   const Icon =
-    status === 0 ? FiWifiOff : status === 403 ? FiLock : notShipped ? FiClock : FiAlertTriangle;
+    status === 0 ? LuWifiOff : status === 403 ? LuLock : notShipped ? LuClock : LuTriangleAlert;
 
   const title =
     status === 0

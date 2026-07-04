@@ -1,8 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import {
-  FiBell, FiKey, FiLogOut, FiMenu, FiMoon, FiSidebar, FiSun, FiUser,
-} from 'react-icons/fi';
+  LuBell, LuKeyRound, LuLogOut, LuMenu, LuMoon, LuPanelLeft, LuSun, LuUserRound,
+} from 'react-icons/lu';
 import { useTheme } from '@/context/ThemeContext';
 import { useAuth } from '@/hooks/useAuth';
 import { toggleSidebar, setSidebarMobileOpen } from '@/store/uiSlice';
@@ -21,13 +21,13 @@ export function Navbar() {
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b border-surface-200/70 bg-white/70 px-4 backdrop-blur-md dark:border-surface-800/60 dark:bg-surface-950/75 sm:px-6">
       <IconButton
-        icon={FiMenu}
+        icon={LuMenu}
         label="Open menu"
         className="lg:hidden"
         onClick={() => dispatch(setSidebarMobileOpen(true))}
       />
       <IconButton
-        icon={FiSidebar}
+        icon={LuPanelLeft}
         label="Toggle sidebar"
         className="hidden lg:inline-flex"
         onClick={() => dispatch(toggleSidebar())}
@@ -35,11 +35,11 @@ export function Navbar() {
 
       <div className="ml-auto flex items-center gap-1.5 sm:gap-2">
         <IconButton
-          icon={theme === 'dark' ? FiSun : FiMoon}
+          icon={theme === 'dark' ? LuSun : LuMoon}
           label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
           onClick={toggleTheme}
         />
-        <IconButton icon={FiBell} label="Notifications" onClick={() => navigate('/notifications')} />
+        <IconButton icon={LuBell} label="Notifications" onClick={() => navigate('/notifications')} />
 
         <Dropdown
           align="right"
@@ -71,10 +71,10 @@ export function Navbar() {
               onClick: () => navigate('/profile'),
             },
             null,
-            { key: 'profile', label: 'My Profile', icon: FiUser, onClick: () => navigate('/profile') },
-            { key: 'password', label: 'Change Password', icon: FiKey, onClick: () => navigate('/change-password') },
+            { key: 'profile', label: 'My Profile', icon: LuUserRound, onClick: () => navigate('/profile') },
+            { key: 'password', label: 'Change Password', icon: LuKeyRound, onClick: () => navigate('/change-password') },
             null,
-            { key: 'logout', label: 'Sign out', icon: FiLogOut, danger: true, onClick: logout },
+            { key: 'logout', label: 'Sign out', icon: LuLogOut, danger: true, onClick: logout },
           ]}
         />
       </div>

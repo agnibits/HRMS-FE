@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
-import { FiShield, FiTrendingUp, FiUserCheck, FiUsers } from 'react-icons/fi';
+import { LuShieldCheck, LuTrendingUp, LuUserRoundCheck, LuUsersRound } from 'react-icons/lu';
 import { userService } from '@/services/userService';
 import { roleService } from '@/services/roleService';
 import { auditService } from '@/services/auditService';
@@ -91,7 +91,7 @@ export default function Analytics() {
         <PageHeader title="Analytics" description="Workforce insights and trends." />
         <Card>
           <EmptyState
-            icon={FiShield}
+            icon={LuShieldCheck}
             title="Analytics unavailable"
             description="Your role doesn't include access to workforce analytics."
           />
@@ -105,10 +105,10 @@ export default function Analytics() {
       <PageHeader title="Analytics" description="Live workforce insights computed from real system data." />
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <StatCard label="Total Workforce" value={totalUsers} icon={FiUsers} accent="primary" loading={usersQuery.isLoading} />
-        <StatCard label="Active Rate" value={`${activePct}%`} icon={FiUserCheck} accent="green" loading={usersQuery.isLoading} deltaLabel="of all accounts" />
-        <StatCard label="2FA Adoption" value={`${mfaAdoption}%`} icon={FiShield} accent="violet" loading={usersQuery.isLoading} deltaLabel="of sampled accounts" />
-        <StatCard label="Roles In Use" value={rolesQuery.data?.data?.length ?? '—'} icon={FiTrendingUp} accent="sky" loading={rolesQuery.isLoading} />
+        <StatCard label="Total Workforce" value={totalUsers} icon={LuUsersRound} accent="primary" loading={usersQuery.isLoading} />
+        <StatCard label="Active Rate" value={`${activePct}%`} icon={LuUserRoundCheck} accent="green" loading={usersQuery.isLoading} deltaLabel="of all accounts" />
+        <StatCard label="2FA Adoption" value={`${mfaAdoption}%`} icon={LuShieldCheck} accent="violet" loading={usersQuery.isLoading} deltaLabel="of sampled accounts" />
+        <StatCard label="Roles In Use" value={rolesQuery.data?.data?.length ?? '—'} icon={LuTrendingUp} accent="sky" loading={rolesQuery.isLoading} />
       </div>
 
       <div className="mt-6 grid grid-cols-1 gap-6 xl:grid-cols-2">

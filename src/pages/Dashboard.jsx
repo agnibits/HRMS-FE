@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import {
-  FiUsers, FiUserCheck, FiUserX, FiClock, FiActivity, FiPlus, FiShield,
-} from 'react-icons/fi';
+  LuUsersRound, LuUserRoundCheck, LuUserRoundX, LuClock, LuActivity, LuPlus, LuShieldCheck,
+} from 'react-icons/lu';
 import { userService } from '@/services/userService';
 import { auditService } from '@/services/auditService';
 import { useAuth } from '@/hooks/useAuth';
@@ -86,7 +86,7 @@ export default function Dashboard() {
         description="Here's what's happening across your organization today."
         actions={
           canReadUsers && (
-            <Button leftIcon={FiPlus} onClick={() => navigate('/employees')}>
+            <Button leftIcon={LuPlus} onClick={() => navigate('/employees')}>
               Add Employee
             </Button>
           )
@@ -96,10 +96,10 @@ export default function Dashboard() {
       {canReadUsers ? (
         <>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-            <StatCard label="Total Employees" value={total.data} icon={FiUsers} accent="primary" loading={total.isLoading} onClick={() => navigate('/employees')} />
-            <StatCard label="Active" value={active.data} icon={FiUserCheck} accent="green" loading={active.isLoading} />
-            <StatCard label="Pending Invitations" value={pending.data} icon={FiClock} accent="amber" loading={pending.isLoading} />
-            <StatCard label="Suspended / Disabled" value={(suspended.data || 0) + (disabled.data || 0)} icon={FiUserX} accent="red" loading={suspended.isLoading || disabled.isLoading} />
+            <StatCard label="Total Employees" value={total.data} icon={LuUsersRound} accent="primary" loading={total.isLoading} onClick={() => navigate('/employees')} />
+            <StatCard label="Active" value={active.data} icon={LuUserRoundCheck} accent="green" loading={active.isLoading} />
+            <StatCard label="Pending Invitations" value={pending.data} icon={LuClock} accent="amber" loading={pending.isLoading} />
+            <StatCard label="Suspended / Disabled" value={(suspended.data || 0) + (disabled.data || 0)} icon={LuUserRoundX} accent="red" loading={suspended.isLoading || disabled.isLoading} />
           </div>
 
           <div className="mt-6 grid grid-cols-1 gap-6 xl:grid-cols-3">
@@ -125,7 +125,7 @@ export default function Dashboard() {
       ) : (
         <Card>
           <EmptyState
-            icon={FiShield}
+            icon={LuShieldCheck}
             title="Welcome to your workspace"
             description="Your role doesn't include workforce analytics. Use the sidebar to access your available modules."
           />
@@ -139,7 +139,7 @@ export default function Dashboard() {
               title="Recent activity"
               description="Latest audited events across the system"
               actions={
-                <Button variant="ghost" size="sm" leftIcon={FiActivity} onClick={() => navigate('/audit-logs')}>
+                <Button variant="ghost" size="sm" leftIcon={LuActivity} onClick={() => navigate('/audit-logs')}>
                   View all
                 </Button>
               }

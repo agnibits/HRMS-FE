@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
 import toast from 'react-hot-toast';
-import { FiUpload } from 'react-icons/fi';
+import { LuUpload } from 'react-icons/lu';
 import { userService } from '@/services/userService';
 import { roleService } from '@/services/roleService';
 import { USER_STATUSES, PERMISSIONS, QUERY_KEYS } from '@/constants';
@@ -167,7 +167,7 @@ export default function Employees() {
         searchPlaceholder="Search by name or email…"
         createLabel="Add Employee"
         headerActions={
-          <Button variant="secondary" leftIcon={FiUpload} onClick={() => { setImportResult(null); setImportOpen(true); }}>
+          <Button variant="secondary" leftIcon={LuUpload} onClick={() => { setImportResult(null); setImportOpen(true); }}>
             Import
           </Button>
         }

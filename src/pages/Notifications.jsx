@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
-import { FiBell, FiCheck, FiCheckCircle, FiInfo, FiAlertTriangle } from 'react-icons/fi';
+import { LuBell, LuCheck, LuCircleCheck, LuInfo, LuTriangleAlert } from 'react-icons/lu';
 import { notificationService } from '@/services/modules';
 import { request } from '@/api/client';
 import { formatRelative } from '@/utils/formatters';
@@ -13,9 +13,9 @@ import { SkeletonText } from '@/components/common/Skeleton';
 import cn from '@/utils/cn';
 
 const typeIcon = {
-  INFO: { icon: FiInfo, cls: 'bg-sky-50 text-sky-600 dark:bg-sky-950/60 dark:text-sky-400' },
-  SUCCESS: { icon: FiCheckCircle, cls: 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/60 dark:text-emerald-400' },
-  WARNING: { icon: FiAlertTriangle, cls: 'bg-amber-50 text-amber-600 dark:bg-amber-950/60 dark:text-amber-400' },
+  INFO: { icon: LuInfo, cls: 'bg-sky-50 text-sky-600 dark:bg-sky-950/60 dark:text-sky-400' },
+  SUCCESS: { icon: LuCircleCheck, cls: 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/60 dark:text-emerald-400' },
+  WARNING: { icon: LuTriangleAlert, cls: 'bg-amber-50 text-amber-600 dark:bg-amber-950/60 dark:text-amber-400' },
 };
 
 export default function Notifications() {
@@ -52,7 +52,7 @@ export default function Notifications() {
         description={unread ? `You have ${unread} unread notification${unread > 1 ? 's' : ''}.` : 'You’re all caught up.'}
         actions={
           items.length > 0 && (
-            <Button variant="secondary" size="sm" leftIcon={FiCheck} loading={markAllRead.isPending} onClick={() => markAllRead.mutate()}>
+            <Button variant="secondary" size="sm" leftIcon={LuCheck} loading={markAllRead.isPending} onClick={() => markAllRead.mutate()}>
               Mark all as read
             </Button>
           )
@@ -66,7 +66,7 @@ export default function Notifications() {
           <ErrorState error={query.error} onRetry={() => query.refetch()} />
         ) : items.length === 0 ? (
           <EmptyState
-            icon={FiBell}
+            icon={LuBell}
             title="No notifications"
             description="System alerts, approvals and mentions will show up here."
           />

@@ -1,7 +1,7 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
-import { FiMail, FiPhone, FiBriefcase, FiTag, FiCalendar } from 'react-icons/fi';
+import { LuMail, LuPhone, LuBriefcaseBusiness, LuTag, LuCalendarDays } from 'react-icons/lu';
 import { candidateService, interviewService } from '@/services/modules';
 import { formatDate, formatDateTime, titleCase } from '@/utils/formatters';
 import PageHeader from '@/components/layout/PageHeader';
@@ -80,11 +80,11 @@ export default function CandidateDetails() {
             <p className="text-sm text-surface-500">{candidate.jobTitle}</p>
             <div className="mt-3"><StatusChip status={candidate.stage} /></div>
             <div className="mt-6 w-full space-y-4 border-t border-surface-100 pt-5 text-left dark:border-surface-800">
-              <InfoRow icon={FiMail} label="Email" value={candidate.email} />
-              <InfoRow icon={FiPhone} label="Phone" value={candidate.phone} />
-              <InfoRow icon={FiBriefcase} label="Applied for" value={candidate.jobTitle} />
-              <InfoRow icon={FiTag} label="Source" value={candidate.source} />
-              <InfoRow icon={FiCalendar} label="Applied on" value={formatDate(candidate.createdAt)} />
+              <InfoRow icon={LuMail} label="Email" value={candidate.email} />
+              <InfoRow icon={LuPhone} label="Phone" value={candidate.phone} />
+              <InfoRow icon={LuBriefcaseBusiness} label="Applied for" value={candidate.jobTitle} />
+              <InfoRow icon={LuTag} label="Source" value={candidate.source} />
+              <InfoRow icon={LuCalendarDays} label="Applied on" value={formatDate(candidate.createdAt)} />
             </div>
           </CardBody>
         </Card>

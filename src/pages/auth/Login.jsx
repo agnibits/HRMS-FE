@@ -5,7 +5,7 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
-import { FiArrowLeft, FiShield } from 'react-icons/fi';
+import { LuArrowLeft, LuShieldCheck } from 'react-icons/lu';
 import { authService } from '@/services/authService';
 import { useAuth } from '@/hooks/useAuth';
 import { FormInput, FormPassword, Input } from '@/components/forms/fields';
@@ -55,7 +55,7 @@ export default function Login() {
       <div className="card p-8">
         <div className="mb-6 flex flex-col items-center text-center">
           <span className="mb-3 flex size-12 items-center justify-center rounded-full bg-primary-50 text-primary-600 dark:bg-primary-950">
-            <FiShield className="size-6" />
+            <LuShieldCheck className="size-6" />
           </span>
           <h1 className="text-xl font-bold text-surface-900 dark:text-surface-50">Two-factor authentication</h1>
           <p className="mt-1 text-sm text-surface-500 dark:text-surface-400">
@@ -87,7 +87,7 @@ export default function Login() {
             onClick={() => { setMfa(null); setCode(''); }}
             className="mx-auto flex items-center gap-1.5 text-sm text-surface-500 hover:text-primary-600"
           >
-            <FiArrowLeft className="size-4" /> Back to sign in
+            <LuArrowLeft className="size-4" /> Back to sign in
           </button>
         </form>
       </div>

@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import toast from 'react-hot-toast';
-import { FiGlobe, FiImage, FiSettings } from 'react-icons/fi';
+import { LuGlobe, LuImage, LuSettings } from 'react-icons/lu';
 import { companyService } from '@/services/modules';
 import PageHeader from '@/components/layout/PageHeader';
 import { Card, CardHeader, CardBody } from '@/components/cards/Card';
@@ -121,9 +121,9 @@ export default function CompanySettings() {
           <Card>
             <CardHeader title="Workspace" />
             <CardBody className="space-y-3 text-sm text-surface-600 dark:text-surface-300">
-              <p className="flex items-center gap-2.5"><FiGlobe className="size-4 text-surface-400" /> API: <code className="rounded bg-surface-100 px-1.5 py-0.5 text-xs dark:bg-surface-800">{import.meta.env.VITE_API_URL}</code></p>
-              <p className="flex items-center gap-2.5"><FiSettings className="size-4 text-surface-400" /> Environment: <span className="font-medium">{import.meta.env.MODE}</span></p>
-              <p className="flex items-center gap-2.5"><FiImage className="size-4 text-surface-400" /> Version: <span className="font-medium">1.0.0</span></p>
+              <p className="flex items-center gap-2.5"><LuGlobe className="size-4 text-surface-400" /> API: <code className="rounded bg-surface-100 px-1.5 py-0.5 text-xs dark:bg-surface-800">{import.meta.env.VITE_API_URL}</code></p>
+              <p className="flex items-center gap-2.5"><LuSettings className="size-4 text-surface-400" /> Environment: <span className="font-medium">{import.meta.env.MODE}</span></p>
+              <p className="flex items-center gap-2.5"><LuImage className="size-4 text-surface-400" /> Version: <span className="font-medium">1.0.0</span></p>
             </CardBody>
           </Card>
         </div>

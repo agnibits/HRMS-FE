@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { AnimatePresence, motion } from 'framer-motion';
-import { FiX } from 'react-icons/fi';
+import { LuX } from 'react-icons/lu';
 import cn from '@/utils/cn';
 import { IconButton } from '@/components/common/Button';
 
@@ -40,7 +40,7 @@ export function Drawer({ isOpen, onClose, title, size = 'md', children, footer }
           >
             <div className="flex items-center justify-between border-b border-surface-200 px-5 py-4 dark:border-surface-800">
               <h2 className="text-base font-semibold text-surface-900 dark:text-surface-100">{title}</h2>
-              <IconButton icon={FiX} label="Close" size="sm" onClick={onClose} />
+              <IconButton icon={LuX} label="Close" size="sm" onClick={onClose} />
             </div>
             <div className="grow overflow-y-auto px-5 py-5">{children}</div>
             {footer && (

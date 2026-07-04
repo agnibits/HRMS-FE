@@ -1,4 +1,4 @@
-import { FiChevronLeft, FiChevronRight, FiChevronsLeft, FiChevronsRight } from 'react-icons/fi';
+import { LuChevronLeft, LuChevronRight, LuChevronsLeft, LuChevronsRight } from 'react-icons/lu';
 import cn from '@/utils/cn';
 import { PAGE_SIZES } from '@/constants';
 import { formatNumber } from '@/utils/formatters';
@@ -33,19 +33,19 @@ export function Pagination({ pagination, page, limit, onPageChange, onLimitChang
 
       <nav className="flex items-center gap-1.5" aria-label="Pagination">
         <button className={btn} disabled={page <= 1} onClick={() => onPageChange(1)} aria-label="First page">
-          <FiChevronsLeft className="size-4" />
+          <LuChevronsLeft className="size-4" />
         </button>
         <button className={btn} disabled={page <= 1} onClick={() => onPageChange(page - 1)} aria-label="Previous page">
-          <FiChevronLeft className="size-4" />
+          <LuChevronLeft className="size-4" />
         </button>
         <span className="px-2 text-sm text-surface-600 dark:text-surface-300">
           Page <span className="font-semibold">{page}</span> of {Math.max(totalPages, 1)}
         </span>
         <button className={btn} disabled={page >= totalPages} onClick={() => onPageChange(page + 1)} aria-label="Next page">
-          <FiChevronRight className="size-4" />
+          <LuChevronRight className="size-4" />
         </button>
         <button className={btn} disabled={page >= totalPages} onClick={() => onPageChange(totalPages)} aria-label="Last page">
-          <FiChevronsRight className="size-4" />
+          <LuChevronsRight className="size-4" />
         </button>
       </nav>
     </div>

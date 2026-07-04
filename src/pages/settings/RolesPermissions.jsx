@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import toast from 'react-hot-toast';
-import { FiEdit2, FiLock, FiPlus, FiShield, FiTrash2 } from 'react-icons/fi';
+import { LuPencilLine, LuLock, LuPlus, LuShieldCheck, LuTrash2 } from 'react-icons/lu';
 import { roleService } from '@/services/roleService';
 import { useAuth } from '@/hooks/useAuth';
 import { QUERY_KEYS, PERMISSIONS } from '@/constants';
@@ -128,7 +128,7 @@ export default function RolesPermissions() {
       <PageHeader
         title="Roles & Permissions"
         description="Define what each role can access across the platform."
-        actions={canCreate && <Button leftIcon={FiPlus} onClick={openCreate}>New Role</Button>}
+        actions={canCreate && <Button leftIcon={LuPlus} onClick={openCreate}>New Role</Button>}
       />
 
       {rolesQuery.isLoading ? (
@@ -140,7 +140,7 @@ export default function RolesPermissions() {
       ) : roles.length === 0 ? (
         <Card>
           <EmptyState
-            icon={FiShield}
+            icon={LuShieldCheck}
             title="No roles defined"
             description="Create your first role to start controlling access."
             actionLabel={canCreate ? 'New Role' : undefined}
@@ -155,7 +155,7 @@ export default function RolesPermissions() {
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex items-center gap-2.5">
                     <span className="flex size-9 items-center justify-center rounded-lg bg-primary-50 text-primary-600 dark:bg-primary-950 dark:text-primary-400">
-                      {role.isSystem ? <FiLock className="size-4" /> : <FiShield className="size-4" />}
+                      {role.isSystem ? <LuLock className="size-4" /> : <LuShieldCheck className="size-4" />}
                     </span>
                     <div>
                       <h3 className="font-semibold text-surface-900 dark:text-surface-100">{role.name}</h3>
@@ -164,10 +164,10 @@ export default function RolesPermissions() {
                   </div>
                   {!role.isSystem && (
                     <div className="flex gap-1">
-                      {canUpdate && <IconButton icon={FiEdit2} label="Edit role" size="sm" onClick={() => openEdit(role)} />}
+                      {canUpdate && <IconButton icon={LuPencilLine} label="Edit role" size="sm" onClick={() => openEdit(role)} />}
                       {canDelete && (
                         <IconButton
-                          icon={FiTrash2}
+                          icon={LuTrash2}
                           label="Delete role"
                           size="sm"
                           className="hover:text-red-600"

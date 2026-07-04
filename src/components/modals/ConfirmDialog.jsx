@@ -1,4 +1,4 @@
-import { FiAlertTriangle, FiHelpCircle } from 'react-icons/fi';
+import { LuTriangleAlert, LuCircleHelp } from 'react-icons/lu';
 import Modal from './Modal';
 import Button from '@/components/common/Button';
 
@@ -34,7 +34,7 @@ export function ConfirmDialog({
               : 'bg-primary-50 text-primary-600 dark:bg-primary-950'
           }`}
         >
-          {variant === 'danger' ? <FiAlertTriangle className="size-5" /> : <FiHelpCircle className="size-5" />}
+          {variant === 'danger' ? <LuTriangleAlert className="size-5" /> : <LuCircleHelp className="size-5" />}
         </div>
         <p className="pt-1.5 text-sm text-surface-600 dark:text-surface-300">{message}</p>
       </div>

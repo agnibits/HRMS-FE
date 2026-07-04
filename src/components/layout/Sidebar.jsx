@@ -1,7 +1,7 @@
 import { NavLink } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { AnimatePresence, motion } from 'framer-motion';
-import { FiX } from 'react-icons/fi';
+import { LuX } from 'react-icons/lu';
 import cn from '@/utils/cn';
 import { APP_NAME } from '@/constants';
 import { NAVIGATION } from '@/constants/navigation';
@@ -120,7 +120,7 @@ export function Sidebar() {
             >
               <div className="flex items-center justify-between pr-3">
                 <BrandMark collapsed={false} />
-                <IconButton icon={FiX} label="Close menu" onClick={closeMobile} />
+                <IconButton icon={LuX} label="Close menu" onClick={closeMobile} />
               </div>
               <NavItems collapsed={false} onNavigate={closeMobile} />
             </motion.aside>

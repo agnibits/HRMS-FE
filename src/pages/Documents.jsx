@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { FiDownload, FiFile } from 'react-icons/fi';
+import { LuDownload, LuFile } from 'react-icons/lu';
 import toast from 'react-hot-toast';
 import { documentService } from '@/services/modules';
 import { formatDate } from '@/utils/formatters';
@@ -22,7 +22,7 @@ const columns = [
     header: 'Document',
     cell: ({ row }) => (
       <div className="flex items-center gap-2.5">
-        <FiFile className="size-4 shrink-0 text-primary-500" />
+        <LuFile className="size-4 shrink-0 text-primary-500" />
         <div>
           <p className="font-medium text-surface-900 dark:text-surface-100">{row.original.name}</p>
           <p className="text-xs text-surface-400">{row.original.fileName || ''}</p>
@@ -72,7 +72,7 @@ export default function Documents() {
       filters={[{ key: 'category', label: 'Category', options: CATEGORIES }]}
       extraRowActions={(row) => [
         {
-          icon: FiDownload,
+          icon: LuDownload,
           label: 'Download',
           onClick: () => {
             if (row.url) window.open(row.url, '_blank');

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import dayjs from 'dayjs';
-import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
+import { LuChevronLeft, LuChevronRight } from 'react-icons/lu';
 import cn from '@/utils/cn';
 import { IconButton } from './Button';
 
@@ -32,14 +32,14 @@ export function Calendar({ events = [], onSelectDate, className }) {
           {month.format('MMMM YYYY')}
         </h3>
         <div className="flex items-center gap-1">
-          <IconButton icon={FiChevronLeft} label="Previous month" size="sm" onClick={() => setMonth(month.subtract(1, 'month'))} />
+          <IconButton icon={LuChevronLeft} label="Previous month" size="sm" onClick={() => setMonth(month.subtract(1, 'month'))} />
           <button
             className="rounded-lg px-2.5 py-1 text-xs font-medium text-primary-600 hover:bg-primary-50 dark:text-primary-400 dark:hover:bg-primary-950"
             onClick={() => setMonth(dayjs().startOf('month'))}
           >
             Today
           </button>
-          <IconButton icon={FiChevronRight} label="Next month" size="sm" onClick={() => setMonth(month.add(1, 'month'))} />
+          <IconButton icon={LuChevronRight} label="Next month" size="sm" onClick={() => setMonth(month.add(1, 'month'))} />
         </div>
       </div>
 

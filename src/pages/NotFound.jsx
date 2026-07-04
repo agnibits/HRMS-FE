@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { FiArrowLeft } from 'react-icons/fi';
+import { LuArrowLeft } from 'react-icons/lu';
 
 export default function NotFound() {
   return (
@@ -13,7 +13,7 @@ export default function NotFound() {
         to="/"
         className="mt-6 inline-flex items-center gap-2 rounded-lg bg-primary-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition-colors hover:bg-primary-700"
       >
-        <FiArrowLeft className="size-4" /> Back to dashboard
+        <LuArrowLeft className="size-4" /> Back to dashboard
       </Link>
     </div>
   );

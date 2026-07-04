@@ -1,7 +1,7 @@
 import { forwardRef, useState } from 'react';
 import { Controller } from 'react-hook-form';
 import ReactSelect from 'react-select';
-import { FiEye, FiEyeOff } from 'react-icons/fi';
+import { LuEye, LuEyeOff } from 'react-icons/lu';
 import cn from '@/utils/cn';
 
 /* ---------- primitives (usable outside RHF) ---------- */
@@ -78,7 +78,7 @@ export function FormPassword({ form, name, label, required, hint, className, ...
           onClick={() => setShow((v) => !v)}
           className="absolute right-3 top-1/2 -translate-y-1/2 text-surface-400 hover:text-surface-600 dark:hover:text-surface-200"
         >
-          {show ? <FiEyeOff className="size-4" /> : <FiEye className="size-4" />}
+          {show ? <LuEyeOff className="size-4" /> : <LuEye className="size-4" />}
         </button>
       </div>
     </FieldWrapper>

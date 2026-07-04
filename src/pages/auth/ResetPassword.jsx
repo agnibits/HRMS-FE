@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
-import { FiAlertTriangle } from 'react-icons/fi';
+import { LuTriangleAlert } from 'react-icons/lu';
 import { authService } from '@/services/authService';
 import { FormPassword } from '@/components/forms/fields';
 import Button from '@/components/common/Button';
@@ -47,7 +47,7 @@ export default function ResetPassword() {
     return (
       <div className="card p-8 text-center">
         <span className="mx-auto mb-4 flex size-12 items-center justify-center rounded-full bg-amber-50 text-amber-600 dark:bg-amber-950/60">
-          <FiAlertTriangle className="size-6" />
+          <LuTriangleAlert className="size-6" />
         </span>
         <h1 className="text-xl font-bold text-surface-900 dark:text-surface-50">Invalid reset link</h1>
         <p className="mt-2 text-sm text-surface-500 dark:text-surface-400">

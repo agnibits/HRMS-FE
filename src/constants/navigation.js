@@ -1,9 +1,9 @@
 import {
-  FiGrid, FiUsers, FiLayers, FiAward, FiClock, FiCalendar, FiSun, FiDollarSign,
-  FiBriefcase, FiUserPlus, FiTrendingUp, FiTarget, FiBookOpen, FiMonitor,
-  FiCreditCard, FiLifeBuoy, FiFolder, FiBell, FiFileText, FiPieChart,
-  FiSettings, FiShield, FiActivity,
-} from 'react-icons/fi';
+  LuLayoutDashboard, LuUsersRound, LuBuilding2, LuBadgeCheck, LuClock, LuCalendarDays,
+  LuTreePalm, LuWallet, LuBriefcaseBusiness, LuUserRoundPlus, LuTrendingUp, LuGoal,
+  LuGraduationCap, LuLaptop, LuReceipt, LuLifeBuoy, LuFolderOpen, LuBell,
+  LuFileChartColumn, LuChartPie, LuSettings, LuShieldCheck, LuScrollText,
+} from 'react-icons/lu';
 
 /**
  * Sidebar navigation, grouped. `permission` hides items the user can't access.
@@ -12,59 +12,59 @@ export const NAVIGATION = [
   {
     group: 'Overview',
     items: [
-      { label: 'Dashboard', to: '/', icon: FiGrid },
-      { label: 'Analytics', to: '/analytics', icon: FiPieChart },
+      { label: 'Dashboard', to: '/', icon: LuLayoutDashboard },
+      { label: 'Analytics', to: '/analytics', icon: LuChartPie },
     ],
   },
   {
     group: 'Workforce',
     items: [
-      { label: 'Employees', to: '/employees', icon: FiUsers, permission: 'user:read' },
-      { label: 'Departments', to: '/departments', icon: FiLayers },
-      { label: 'Designations', to: '/designations', icon: FiAward },
-      { label: 'Onboarding', to: '/onboarding', icon: FiUserPlus },
+      { label: 'Employees', to: '/employees', icon: LuUsersRound, permission: 'user:read' },
+      { label: 'Departments', to: '/departments', icon: LuBuilding2 },
+      { label: 'Designations', to: '/designations', icon: LuBadgeCheck },
+      { label: 'Onboarding', to: '/onboarding', icon: LuUserRoundPlus },
     ],
   },
   {
     group: 'Time',
     items: [
-      { label: 'Attendance', to: '/attendance', icon: FiClock },
-      { label: 'Leave', to: '/leave', icon: FiCalendar },
-      { label: 'Holidays', to: '/holidays', icon: FiSun },
+      { label: 'Attendance', to: '/attendance', icon: LuClock },
+      { label: 'Leave', to: '/leave', icon: LuCalendarDays },
+      { label: 'Holidays', to: '/holidays', icon: LuTreePalm },
     ],
   },
   {
     group: 'Talent',
     items: [
-      { label: 'Recruitment', to: '/recruitment', icon: FiBriefcase },
-      { label: 'Performance', to: '/performance', icon: FiTrendingUp },
-      { label: 'Goals (OKRs)', to: '/goals', icon: FiTarget },
-      { label: 'Learning', to: '/learning', icon: FiBookOpen },
+      { label: 'Recruitment', to: '/recruitment', icon: LuBriefcaseBusiness },
+      { label: 'Performance', to: '/performance', icon: LuTrendingUp },
+      { label: 'Goals (OKRs)', to: '/goals', icon: LuGoal },
+      { label: 'Learning', to: '/learning', icon: LuGraduationCap },
     ],
   },
   {
     group: 'Operations',
     items: [
-      { label: 'Payroll', to: '/payroll', icon: FiDollarSign },
-      { label: 'Assets', to: '/assets', icon: FiMonitor },
-      { label: 'Expenses', to: '/expenses', icon: FiCreditCard },
-      { label: 'Help Desk', to: '/helpdesk', icon: FiLifeBuoy },
-      { label: 'Documents', to: '/documents', icon: FiFolder },
+      { label: 'Payroll', to: '/payroll', icon: LuWallet },
+      { label: 'Assets', to: '/assets', icon: LuLaptop },
+      { label: 'Expenses', to: '/expenses', icon: LuReceipt },
+      { label: 'Help Desk', to: '/helpdesk', icon: LuLifeBuoy },
+      { label: 'Documents', to: '/documents', icon: LuFolderOpen },
     ],
   },
   {
     group: 'Insights',
     items: [
-      { label: 'Reports', to: '/reports', icon: FiFileText },
-      { label: 'Notifications', to: '/notifications', icon: FiBell },
+      { label: 'Reports', to: '/reports', icon: LuFileChartColumn },
+      { label: 'Notifications', to: '/notifications', icon: LuBell },
     ],
   },
   {
     group: 'Administration',
     items: [
-      { label: 'Company Settings', to: '/settings/company', icon: FiSettings },
-      { label: 'Roles & Permissions', to: '/settings/roles', icon: FiShield, permission: 'role:read' },
-      { label: 'Audit Logs', to: '/audit-logs', icon: FiActivity, permission: 'audit:read' },
+      { label: 'Company Settings', to: '/settings/company', icon: LuSettings },
+      { label: 'Roles & Permissions', to: '/settings/roles', icon: LuShieldCheck, permission: 'role:read' },
+      { label: 'Audit Logs', to: '/audit-logs', icon: LuScrollText, permission: 'audit:read' },
     ],
   },
 ];

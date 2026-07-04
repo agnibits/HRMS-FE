@@ -1,8 +1,8 @@
-import { FiInbox } from 'react-icons/fi';
+import { LuInbox } from 'react-icons/lu';
 import Button from './Button';
 
 export function EmptyState({
-  icon: Icon = FiInbox,
+  icon: Icon = LuInbox,
   title = 'Nothing here yet',
   description,
   actionLabel,

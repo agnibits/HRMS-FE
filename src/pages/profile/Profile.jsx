@@ -6,8 +6,8 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import toast from 'react-hot-toast';
 import {
-  FiKey, FiLogOut, FiMail, FiMonitor, FiShield, FiSmartphone, FiTrash2, FiUser, FiCheckCircle,
-} from 'react-icons/fi';
+  LuKeyRound, LuLogOut, LuMail, LuLaptop, LuShieldCheck, LuSmartphone, LuTrash2, LuUserRound, LuCircleCheck,
+} from 'react-icons/lu';
 import { useNavigate } from 'react-router-dom';
 import { authService } from '@/services/authService';
 import { userService } from '@/services/userService';
@@ -78,7 +78,7 @@ function ProfileTab() {
               variant="subtle"
               size="sm"
               className="mt-4"
-              leftIcon={FiMail}
+              leftIcon={LuMail}
               loading={sendVerification.isPending}
               onClick={() => sendVerification.mutate()}
             >
@@ -87,7 +87,7 @@ function ProfileTab() {
           )}
           {user?.emailVerified && (
             <p className="mt-4 flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400">
-              <FiCheckCircle className="size-3.5" /> Email verified
+              <LuCircleCheck className="size-3.5" /> Email verified
             </p>
           )}
         </CardBody>
@@ -173,7 +173,7 @@ function MfaSection() {
         }
       />
       <CardBody className="flex items-center gap-3 text-sm">
-        <FiShield className={`size-5 ${user?.mfaEnabled ? 'text-emerald-500' : 'text-surface-400'}`} />
+        <LuShieldCheck className={`size-5 ${user?.mfaEnabled ? 'text-emerald-500' : 'text-surface-400'}`} />
         <span className="text-surface-600 dark:text-surface-300">
           {user?.mfaEnabled
             ? 'Your account is protected with an authenticator app.'
@@ -295,7 +295,7 @@ function SessionsSection() {
           title="Active sessions"
           description="Everywhere you're currently signed in."
           actions={
-            <Button variant="secondary" size="sm" leftIcon={FiLogOut} loading={logoutAll.isPending} onClick={() => logoutAll.mutate()}>
+            <Button variant="secondary" size="sm" leftIcon={LuLogOut} loading={logoutAll.isPending} onClick={() => logoutAll.mutate()}>
               Sign out others
             </Button>
           }
@@ -308,7 +308,7 @@ function SessionsSection() {
           ) : (
             sessions.map((s) => (
               <div key={s.id} className="flex items-center gap-3 rounded-lg border border-surface-200 p-3.5 dark:border-surface-700">
-                <FiMonitor className="size-5 shrink-0 text-surface-400" />
+                <LuLaptop className="size-5 shrink-0 text-surface-400" />
                 <div className="min-w-0 grow">
                   <p className="flex items-center gap-2 text-sm font-medium text-surface-800 dark:text-surface-200">
                     {s.device?.browser || 'Unknown browser'} · {s.device?.platform || 'Unknown OS'}
@@ -339,7 +339,7 @@ function SessionsSection() {
           ) : (
             devices.map((d) => (
               <div key={d.id} className="flex items-center gap-3 rounded-lg border border-surface-200 p-3.5 dark:border-surface-700">
-                <FiSmartphone className="size-5 shrink-0 text-surface-400" />
+                <LuSmartphone className="size-5 shrink-0 text-surface-400" />
                 <div className="min-w-0 grow">
                   <p className="flex items-center gap-2 text-sm font-medium text-surface-800 dark:text-surface-200">
                     {d.name || `${d.browser || 'Browser'} on ${d.platform || 'device'}`}
@@ -357,7 +357,7 @@ function SessionsSection() {
                   className="text-red-500 hover:bg-red-50 dark:hover:bg-red-950/40"
                   onClick={() => removeDevice.mutate(d.id)}
                 >
-                  <FiTrash2 className="size-3.5" />
+                  <LuTrash2 className="size-3.5" />
                 </Button>
               </div>
             ))
@@ -375,8 +375,8 @@ export default function Profile() {
       <PageHeader title="My Profile" description="Manage your personal information and account security." />
       <Tabs
         tabs={[
-          { key: 'profile', label: 'Profile', icon: FiUser },
-          { key: 'security', label: 'Security', icon: FiShield },
+          { key: 'profile', label: 'Profile', icon: LuUserRound },
+          { key: 'security', label: 'Security', icon: LuShieldCheck },
         ]}
       >
         {(active) =>
@@ -389,7 +389,7 @@ export default function Profile() {
                   title="Password"
                   description="Change your account password. Other sessions are signed out for safety."
                   actions={
-                    <Button variant="secondary" size="sm" leftIcon={FiKey} onClick={() => navigate('/change-password')}>
+                    <Button variant="secondary" size="sm" leftIcon={LuKeyRound} onClick={() => navigate('/change-password')}>
                       Change password
                     </Button>
                   }

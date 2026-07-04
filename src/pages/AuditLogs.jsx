@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { FiEye } from 'react-icons/fi';
+import { LuEye } from 'react-icons/lu';
 import { auditService } from '@/services/auditService';
 import { QUERY_KEYS } from '@/constants';
 import { formatDateTime, titleCase, truncate } from '@/utils/formatters';
@@ -87,7 +87,7 @@ export default function AuditLogs() {
       enableSorting: false,
       size: 50,
       cell: ({ row }) => (
-        <IconButton icon={FiEye} label="View details" size="sm" onClick={() => setSelected(row.original)} />
+        <IconButton icon={LuEye} label="View details" size="sm" onClick={() => setSelected(row.original)} />
       ),
     },
   ];

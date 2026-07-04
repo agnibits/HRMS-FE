@@ -3,8 +3,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 import {
-  FiMail, FiPhone, FiCalendar, FiShield, FiClock, FiTrash2, FiRotateCcw, FiCheckCircle, FiXCircle,
-} from 'react-icons/fi';
+  LuMail, LuPhone, LuCalendarDays, LuShieldCheck, LuClock, LuTrash2, LuRotateCcw, LuCircleCheck, LuCircleX,
+} from 'react-icons/lu';
 import { userService } from '@/services/userService';
 import { roleService } from '@/services/roleService';
 import { auditService } from '@/services/auditService';
@@ -110,7 +110,7 @@ export default function EmployeeProfile() {
         ]}
         actions={
           hasPermission(PERMISSIONS.USER_DELETE) && (
-            <Button variant="danger" leftIcon={FiTrash2} onClick={() => deleteModal.open()}>
+            <Button variant="danger" leftIcon={LuTrash2} onClick={() => deleteModal.open()}>
               Deactivate
             </Button>
           )
@@ -131,10 +131,10 @@ export default function EmployeeProfile() {
               ))}
             </div>
             <div className="mt-6 w-full space-y-4 border-t border-surface-100 pt-5 text-left dark:border-surface-800">
-              <InfoRow icon={FiMail} label="Email" value={user.email} />
-              <InfoRow icon={FiPhone} label="Phone" value={user.phone} />
-              <InfoRow icon={FiCalendar} label="Joined" value={formatDate(user.createdAt)} />
-              <InfoRow icon={FiClock} label="Last active" value={formatRelative(user.lastLoginAt)} />
+              <InfoRow icon={LuMail} label="Email" value={user.email} />
+              <InfoRow icon={LuPhone} label="Phone" value={user.phone} />
+              <InfoRow icon={LuCalendarDays} label="Joined" value={formatDate(user.createdAt)} />
+              <InfoRow icon={LuClock} label="Last active" value={formatRelative(user.lastLoginAt)} />
             </div>
           </CardBody>
         </Card>
@@ -154,20 +154,20 @@ export default function EmployeeProfile() {
                   <Card>
                     <CardHeader title="Account details" />
                     <CardBody className="grid grid-cols-1 gap-x-8 gap-y-5 sm:grid-cols-2">
-                      <InfoRow icon={FiShield} label="Account status" value={titleCase(user.status)} />
+                      <InfoRow icon={LuShieldCheck} label="Account status" value={titleCase(user.status)} />
                       <InfoRow
-                        icon={user.mfaEnabled ? FiCheckCircle : FiXCircle}
+                        icon={user.mfaEnabled ? LuCircleCheck : LuCircleX}
                         label="Two-factor authentication"
                         value={user.mfaEnabled ? 'Enabled' : 'Not enabled'}
                       />
                       <InfoRow
-                        icon={user.emailVerifiedAt ? FiCheckCircle : FiXCircle}
+                        icon={user.emailVerifiedAt ? LuCircleCheck : LuCircleX}
                         label="Email verified"
                         value={user.emailVerifiedAt ? formatDateTime(user.emailVerifiedAt) : 'Not verified'}
                       />
-                      <InfoRow icon={FiClock} label="Last sign-in" value={formatDateTime(user.lastLoginAt)} />
-                      <InfoRow icon={FiCalendar} label="Created" value={formatDateTime(user.createdAt)} />
-                      <InfoRow icon={FiCalendar} label="Last updated" value={formatDateTime(user.updatedAt)} />
+                      <InfoRow icon={LuClock} label="Last sign-in" value={formatDateTime(user.lastLoginAt)} />
+                      <InfoRow icon={LuCalendarDays} label="Created" value={formatDateTime(user.createdAt)} />
+                      <InfoRow icon={LuCalendarDays} label="Last updated" value={formatDateTime(user.updatedAt)} />
                     </CardBody>
                   </Card>
                 )}
