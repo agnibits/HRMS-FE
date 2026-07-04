@@ -49,7 +49,7 @@ const columns = [
 export default function InterviewScheduling() {
   const calendarQuery = useQuery({
     queryKey: ['interviews', 'calendar'],
-    queryFn: () => interviewService.list({ limit: 200 }),
+    queryFn: () => interviewService.list({ limit: 100 }),
     retry: false,
   });
 

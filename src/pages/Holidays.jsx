@@ -35,7 +35,7 @@ const columns = [
 export default function Holidays() {
   const calendarQuery = useQuery({
     queryKey: ['holidays', 'calendar'],
-    queryFn: () => holidayService.list({ limit: 200 }),
+    queryFn: () => holidayService.list({ limit: 100 }),
     retry: false,
   });
 

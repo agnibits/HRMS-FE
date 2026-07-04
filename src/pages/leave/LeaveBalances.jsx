@@ -85,7 +85,19 @@ export default function LeaveBalances() {
   });
   const leavesQuery = useQuery({
     queryKey: ['leaves', 'all-for-balance'],
-    queryFn: () => leaveService.list({ limit: 200 }),
+    // Backend caps page size at 100 — fetch all pages (up to a safe bound) so
+    // the balance accrual sees every leave record.
+    queryFn: async () => {
+      const first = await leaveService.list({ limit: 100, page: 1 });
+      const totalPages = Math.min(first.meta?.pagination?.totalPages || 1, 10);
+      if (totalPages <= 1) return first;
+      const rest = await Promise.all(
+        Array.from({ length: totalPages - 1 }, (_, i) =>
+          leaveService.list({ limit: 100, page: i + 2 })
+        )
+      );
+      return { ...first, data: [first.data, ...rest.map((r) => r.data)].flat() };
+    },
     retry: false,
   });
 
