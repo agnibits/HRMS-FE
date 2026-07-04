@@ -65,7 +65,9 @@ export default function Dashboard() {
 
   const statusDistribution = useMemo(() => {
     const map = { ACTIVE: active.data, PENDING: pending.data, SUSPENDED: suspended.data, DISABLED: disabled.data };
-    return USER_STATUSES.map((s) => ({ name: titleCase(s), value: map[s] || 0 })).filter((d) => d.value > 0);
+    const tones = { ACTIVE: 'green', PENDING: 'amber', SUSPENDED: 'orange', DISABLED: 'red' };
+    return USER_STATUSES.map((s) => ({ name: titleCase(s), value: map[s] || 0, tone: tones[s] }))
+      .filter((d) => d.value > 0);
   }, [active.data, pending.data, suspended.data, disabled.data]);
 
   const activityItems = (recentActivity.data?.data || []).map((log) => ({

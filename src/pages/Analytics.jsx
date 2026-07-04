@@ -61,7 +61,12 @@ export default function Analytics() {
   const statusDistribution = useMemo(() => {
     const counts = {};
     users.forEach((u) => (counts[u.status] = (counts[u.status] || 0) + 1));
-    return Object.entries(counts).map(([name, value]) => ({ name: titleCase(name), value }));
+    const tones = { ACTIVE: 'green', PENDING: 'amber', SUSPENDED: 'orange', DISABLED: 'red' };
+    return Object.entries(counts).map(([name, value]) => ({
+      name: titleCase(name),
+      value,
+      tone: tones[name] || 'gray',
+    }));
   }, [users]);
 
   const activityByDay = useMemo(() => {

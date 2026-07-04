@@ -9,6 +9,19 @@ import { useTheme } from '@/context/ThemeContext';
 const LIGHT = {
   series: ['#2a78d6', '#1baf7a', '#eda100', '#4a3aa7', '#e34948', '#008300'],
   sequential: ['#cde2fb', '#9ec5f4', '#6da7ec', '#3987e5', '#256abf', '#184f95'],
+  /** Brand accent for single-measure charts (trend lines/areas). */
+  accent: '#4f46e5',
+  /** Semantic tones — status charts share these with StatusChip so UI reads as one system. */
+  tones: {
+    green: '#059669',
+    amber: '#d97706',
+    orange: '#ea580c',
+    red: '#dc2626',
+    blue: '#0284c7',
+    violet: '#7c3aed',
+    gray: '#64748b',
+  },
+  track: '#eef1f6',
   ink: '#0f172a',
   inkSecondary: '#475569',
   inkMuted: '#94a3b8',
@@ -22,6 +35,17 @@ const LIGHT = {
 const DARK = {
   series: ['#3987e5', '#199e70', '#c98500', '#9085e9', '#e66767', '#008300'],
   sequential: ['#0d366b', '#104281', '#184f95', '#1c5cab', '#2a78d6', '#3987e5'],
+  accent: '#818cf8',
+  tones: {
+    green: '#34d399',
+    amber: '#fbbf24',
+    orange: '#fb923c',
+    red: '#f87171',
+    blue: '#38bdf8',
+    violet: '#a78bfa',
+    gray: '#94a3b8',
+  },
+  track: '#1c2740',
   ink: '#f1f5f9',
   inkSecondary: '#94a3b8',
   inkMuted: '#64748b',
