@@ -4,14 +4,15 @@ import Spinner from './Spinner';
 
 const variants = {
   primary:
-    'bg-primary-600 text-white hover:bg-primary-700 focus-visible:ring-primary-500/40 shadow-sm',
+    'bg-primary-600 text-white hover:bg-primary-700 focus-visible:ring-primary-500/40 shadow-[inset_0_1px_0_rgb(255_255_255/0.12),0_1px_2px_rgb(16_17_26/0.24)]',
   secondary:
-    'border border-surface-300 bg-white text-surface-700 hover:bg-surface-50 dark:border-surface-700 dark:bg-surface-900 dark:text-surface-200 dark:hover:bg-surface-800',
-  danger: 'bg-red-600 text-white hover:bg-red-700 focus-visible:ring-red-500/40 shadow-sm',
+    'border border-surface-300/90 bg-white text-surface-700 shadow-[0_1px_2px_rgb(16_17_26/0.05)] hover:bg-surface-50 dark:border-surface-700/80 dark:bg-surface-850 dark:text-surface-200 dark:shadow-none dark:hover:bg-surface-800',
+  danger:
+    'bg-red-600 text-white hover:bg-red-700 focus-visible:ring-red-500/40 shadow-[inset_0_1px_0_rgb(255_255_255/0.12),0_1px_2px_rgb(16_17_26/0.24)]',
   ghost:
-    'text-surface-600 hover:bg-surface-100 hover:text-surface-900 dark:text-surface-300 dark:hover:bg-surface-800 dark:hover:text-surface-100',
+    'text-surface-600 hover:bg-surface-200/60 hover:text-surface-900 dark:text-surface-300 dark:hover:bg-surface-800 dark:hover:text-surface-100',
   subtle:
-    'bg-primary-50 text-primary-700 hover:bg-primary-100 dark:bg-primary-950 dark:text-primary-300 dark:hover:bg-primary-900',
+    'bg-primary-50 text-primary-700 hover:bg-primary-100 dark:bg-primary-500/10 dark:text-primary-300 dark:hover:bg-primary-500/20',
 };
 
 const sizes = {

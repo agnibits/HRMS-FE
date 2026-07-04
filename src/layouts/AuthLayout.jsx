@@ -13,14 +13,23 @@ export function AuthLayout() {
       {/* Brand panel */}
       <div className="relative hidden w-1/2 flex-col justify-between overflow-hidden bg-surface-950 p-12 lg:flex">
         <div
-          className="pointer-events-none absolute inset-0 opacity-40"
+          className="pointer-events-none absolute inset-0"
           style={{
             background:
-              'radial-gradient(60% 50% at 20% 10%, #4f46e5 0%, transparent 60%), radial-gradient(50% 40% at 90% 90%, #312e81 0%, transparent 55%)',
+              'radial-gradient(70% 55% at 12% 0%, rgb(90 95 207 / 0.35) 0%, transparent 60%), radial-gradient(55% 45% at 100% 100%, rgb(61 64 146 / 0.4) 0%, transparent 58%), linear-gradient(180deg, #0e0f14 0%, #15161d 100%)',
+          }}
+        />
+        <div
+          className="pointer-events-none absolute inset-0 opacity-[0.35]"
+          style={{
+            backgroundImage:
+              'linear-gradient(rgb(255 255 255 / 0.035) 1px, transparent 1px), linear-gradient(90deg, rgb(255 255 255 / 0.035) 1px, transparent 1px)',
+            backgroundSize: '44px 44px',
+            maskImage: 'radial-gradient(70% 70% at 30% 30%, black, transparent)',
           }}
         />
         <div className="relative flex items-center gap-3">
-          <span className="flex size-10 items-center justify-center rounded-xl bg-primary-600 text-lg font-bold text-white">A</span>
+          <span className="flex size-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 text-lg font-bold text-white shadow-[inset_0_1px_0_rgb(255_255_255/0.2)]">A</span>
           <span className="text-xl font-bold text-white">{APP_NAME}</span>
         </div>
         <motion.div

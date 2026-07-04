@@ -19,7 +19,7 @@ export function Navbar() {
   const navigate = useNavigate();
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b border-surface-200 bg-white/85 px-4 backdrop-blur dark:border-surface-800 dark:bg-surface-900/85 sm:px-6">
+    <header className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b border-surface-200/70 bg-white/70 px-4 backdrop-blur-md dark:border-surface-800/60 dark:bg-surface-950/75 sm:px-6">
       <IconButton
         icon={FiMenu}
         label="Open menu"

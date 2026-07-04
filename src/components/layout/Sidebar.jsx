@@ -12,11 +12,11 @@ import { IconButton } from '@/components/common/Button';
 function BrandMark({ collapsed }) {
   return (
     <div className="flex h-16 items-center gap-2.5 px-5">
-      <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary-600 text-sm font-bold text-white shadow-sm">
+      <span className="flex size-8 shrink-0 items-center justify-center rounded-[10px] bg-gradient-to-br from-primary-500 to-primary-700 text-sm font-bold text-white shadow-[inset_0_1px_0_rgb(255_255_255/0.2),0_2px_6px_rgb(90_95_207/0.35)]">
         A
       </span>
       {!collapsed && (
-        <span className="truncate text-base font-bold tracking-tight text-surface-900 dark:text-white">
+        <span className="truncate text-[15px] font-bold tracking-tight text-surface-900 dark:text-white">
           {APP_NAME}
         </span>
       )}
@@ -34,7 +34,7 @@ function NavItems({ collapsed, onNavigate }) {
         return (
           <div key={group.group}>
             {!collapsed && (
-              <p className="mb-1.5 px-2 text-[11px] font-semibold uppercase tracking-wider text-surface-400 dark:text-surface-500">
+              <p className="mb-1.5 px-2.5 text-[10.5px] font-semibold uppercase tracking-[0.08em] text-surface-400 dark:text-surface-500">
                 {group.group}
               </p>
             )}
@@ -48,16 +48,28 @@ function NavItems({ collapsed, onNavigate }) {
                     title={collapsed ? item.label : undefined}
                     className={({ isActive }) =>
                       cn(
-                        'group flex items-center gap-3 rounded-lg px-2.5 py-2 text-sm font-medium transition-colors',
+                        'group relative flex items-center gap-3 rounded-lg px-2.5 py-2 text-[13.5px] font-medium transition-colors',
                         collapsed && 'justify-center',
                         isActive
-                          ? 'bg-primary-600 text-white shadow-sm'
-                          : 'text-surface-600 hover:bg-surface-100 hover:text-surface-900 dark:text-surface-400 dark:hover:bg-surface-800 dark:hover:text-surface-100'
+                          ? 'bg-primary-600/[0.09] font-semibold text-primary-700 dark:bg-primary-400/10 dark:text-primary-300'
+                          : 'text-surface-600 hover:bg-surface-200/50 hover:text-surface-900 dark:text-surface-400 dark:hover:bg-surface-800/70 dark:hover:text-surface-100'
                       )
                     }
                   >
-                    <item.icon className="size-[18px] shrink-0" />
-                    {!collapsed && <span className="truncate">{item.label}</span>}
+                    {({ isActive }) => (
+                      <>
+                        {isActive && !collapsed && (
+                          <span className="absolute -left-3 top-1/2 h-4.5 w-[3px] -translate-y-1/2 rounded-r-full bg-primary-600 dark:bg-primary-400" />
+                        )}
+                        <item.icon
+                          className={cn(
+                            'size-[17px] shrink-0 transition-colors',
+                            !isActive && 'text-surface-400 group-hover:text-surface-600 dark:text-surface-500 dark:group-hover:text-surface-300'
+                          )}
+                        />
+                        {!collapsed && <span className="truncate">{item.label}</span>}
+                      </>
+                    )}
                   </NavLink>
                 </li>
               ))}
@@ -80,7 +92,7 @@ export function Sidebar() {
       {/* Desktop */}
       <aside
         className={cn(
-          'sticky top-0 hidden h-screen shrink-0 flex-col border-r border-surface-200 bg-white transition-[width] duration-200 dark:border-surface-800 dark:bg-surface-900 lg:flex',
+          'sticky top-0 hidden h-screen shrink-0 flex-col border-r border-surface-200/80 bg-white transition-[width] duration-200 dark:border-surface-800/60 dark:bg-surface-950 lg:flex',
           collapsed ? 'w-[76px]' : 'w-64'
         )}
       >
@@ -100,7 +112,7 @@ export function Sidebar() {
               onClick={closeMobile}
             />
             <motion.aside
-              className="absolute inset-y-0 left-0 flex w-72 flex-col bg-white shadow-pop dark:bg-surface-900"
+              className="absolute inset-y-0 left-0 flex w-72 flex-col bg-white shadow-pop dark:bg-surface-950"
               initial={{ x: '-100%' }}
               animate={{ x: 0 }}
               exit={{ x: '-100%' }}

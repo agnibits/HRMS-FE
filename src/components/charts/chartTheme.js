@@ -10,7 +10,7 @@ const LIGHT = {
   series: ['#2a78d6', '#1baf7a', '#eda100', '#4a3aa7', '#e34948', '#008300'],
   sequential: ['#cde2fb', '#9ec5f4', '#6da7ec', '#3987e5', '#256abf', '#184f95'],
   /** Brand accent for single-measure charts (trend lines/areas). */
-  accent: '#4f46e5',
+  accent: '#5a5fcf',
   /** Semantic tones — status charts share these with StatusChip so UI reads as one system. */
   tones: {
     green: '#059669',
@@ -35,7 +35,7 @@ const LIGHT = {
 const DARK = {
   series: ['#3987e5', '#199e70', '#c98500', '#9085e9', '#e66767', '#008300'],
   sequential: ['#0d366b', '#104281', '#184f95', '#1c5cab', '#2a78d6', '#3987e5'],
-  accent: '#818cf8',
+  accent: '#8f95e4',
   tones: {
     green: '#34d399',
     amber: '#fbbf24',
@@ -43,17 +43,17 @@ const DARK = {
     red: '#f87171',
     blue: '#38bdf8',
     violet: '#a78bfa',
-    gray: '#94a3b8',
+    gray: '#9ba1b2',
   },
-  track: '#1c2740',
-  ink: '#f1f5f9',
-  inkSecondary: '#94a3b8',
-  inkMuted: '#64748b',
-  grid: '#1e293b',
-  axis: '#334155',
-  surface: '#0f172a',
-  tooltipBg: '#172033',
-  tooltipBorder: '#334155',
+  track: '#23252e',
+  ink: '#f1f2f5',
+  inkSecondary: '#9ba1b2',
+  inkMuted: '#6d7386',
+  grid: '#23252e',
+  axis: '#3a3e4c',
+  surface: '#15161d',
+  tooltipBg: '#1b1d25',
+  tooltipBorder: '#262933',
 };
 
 export function useChartTheme() {

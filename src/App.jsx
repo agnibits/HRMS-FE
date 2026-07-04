@@ -45,8 +45,8 @@ export default function App() {
           duration: 3500,
           style:
             theme === 'dark'
-              ? { background: '#172033', color: '#f1f5f9', border: '1px solid #334155' }
-              : { background: '#ffffff', color: '#0f172a', boxShadow: '0 10px 30px -6px rgb(15 23 42 / 0.18)' },
+              ? { background: '#1b1d25', color: '#f1f2f5', border: '1px solid #262933' }
+              : { background: '#ffffff', color: '#15161d', boxShadow: '0 16px 40px -12px rgb(16 17 26 / 0.28)' },
         }}
       />
     </>

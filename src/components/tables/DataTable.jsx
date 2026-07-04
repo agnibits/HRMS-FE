@@ -243,7 +243,7 @@ export function DataTable({
           <table className="w-full min-w-max text-sm">
             <thead>
               {table.getHeaderGroups().map((hg) => (
-                <tr key={hg.id} className="border-b border-surface-200 bg-surface-50 dark:border-surface-800 dark:bg-surface-850">
+                <tr key={hg.id} className="border-b border-surface-200/80 bg-surface-50/80 dark:border-surface-800/80 dark:bg-surface-850/60">
                   {hg.headers.map((header) => {
                     const canSort = header.column.getCanSort();
                     const sorted = header.column.getIsSorted();
@@ -251,7 +251,7 @@ export function DataTable({
                       <th
                         key={header.id}
                         style={{ width: header.column.columnDef.size }}
-                        className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-surface-500 dark:text-surface-400"
+                        className="px-4 py-2.5 text-left text-xs font-medium text-surface-500 dark:text-surface-400"
                         aria-sort={sorted === 'asc' ? 'ascending' : sorted === 'desc' ? 'descending' : undefined}
                       >
                         {header.isPlaceholder ? null : canSort ? (
