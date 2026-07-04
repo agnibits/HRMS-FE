@@ -12,7 +12,7 @@ import { IconButton } from '@/components/common/Button';
 function BrandMark({ collapsed }) {
   return (
     <div className="flex h-16 items-center gap-2.5 px-5">
-      <span className="flex size-8 shrink-0 items-center justify-center rounded-[10px] bg-gradient-to-br from-primary-500 to-primary-700 text-sm font-bold text-white shadow-[inset_0_1px_0_rgb(255_255_255/0.2),0_2px_6px_rgb(90_95_207/0.35)]">
+      <span className="flex size-8 shrink-0 items-center justify-center rounded-[10px] bg-gradient-to-br from-primary-500 to-primary-700 text-sm font-bold text-white shadow-[inset_0_1px_0_rgb(255_255_255/0.2),0_2px_6px_rgb(16_132_97/0.35)]">
         A
       </span>
       {!collapsed && (

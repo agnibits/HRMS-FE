@@ -16,7 +16,7 @@ export function AuthLayout() {
           className="pointer-events-none absolute inset-0"
           style={{
             background:
-              'radial-gradient(70% 55% at 12% 0%, rgb(90 95 207 / 0.35) 0%, transparent 60%), radial-gradient(55% 45% at 100% 100%, rgb(61 64 146 / 0.4) 0%, transparent 58%), linear-gradient(180deg, #0e0f14 0%, #15161d 100%)',
+              'radial-gradient(70% 55% at 12% 0%, rgb(16 132 97 / 0.32) 0%, transparent 60%), radial-gradient(55% 45% at 100% 100%, rgb(13 107 80 / 0.38) 0%, transparent 58%), linear-gradient(180deg, #0e0f14 0%, #15161d 100%)',
           }}
         />
         <div

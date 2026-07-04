@@ -10,7 +10,7 @@ const LIGHT = {
   series: ['#2a78d6', '#1baf7a', '#eda100', '#4a3aa7', '#e34948', '#008300'],
   sequential: ['#cde2fb', '#9ec5f4', '#6da7ec', '#3987e5', '#256abf', '#184f95'],
   /** Brand accent for single-measure charts (trend lines/areas). */
-  accent: '#5a5fcf',
+  accent: '#108461',
   /** Semantic tones — status charts share these with StatusChip so UI reads as one system. */
   tones: {
     green: '#059669',
@@ -35,7 +35,7 @@ const LIGHT = {
 const DARK = {
   series: ['#3987e5', '#199e70', '#c98500', '#9085e9', '#e66767', '#008300'],
   sequential: ['#0d366b', '#104281', '#184f95', '#1c5cab', '#2a78d6', '#3987e5'],
-  accent: '#8f95e4',
+  accent: '#47b892',
   tones: {
     green: '#34d399',
     amber: '#fbbf24',
