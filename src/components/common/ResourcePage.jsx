@@ -16,6 +16,7 @@ import Button, { IconButton } from '@/components/common/Button';
 import FilterSelect from '@/components/common/FilterSelect';
 import FormShell from '@/components/forms/FormShell';
 import FileUpload from '@/components/forms/FileUpload';
+import RemoteFormSelect from '@/components/forms/RemoteFormSelect';
 import {
   FormInput, FormPassword, FormTextarea, FormDate, FormCheckbox, FormSelect,
   FormNativeSelect, FieldWrapper,
@@ -98,7 +99,13 @@ export function ResourcePage({
   const openEdit = (row) => {
     const values = toEditValues
       ? toEditValues(row)
-      : Object.fromEntries(fields.map((f) => [f.name, row[f.name] ?? defaults[f.name] ?? '']));
+      : Object.fromEntries(
+          fields.map((f) => {
+            // Reference fields store as `<name>Id` on the row — prefill from that.
+            const raw = row[f.name] ?? (f.type === 'remote' ? row[`${f.name}Id`] : undefined);
+            return [f.name, raw ?? defaults[f.name] ?? ''];
+          })
+        );
     form.reset(values);
     formModal.open(row);
   };
@@ -187,6 +194,17 @@ export function ResourcePage({
           <FormSelect {...common} options={f.options || []} isMulti={false} />
         );
       case 'multiselect': return <FormSelect {...common} options={f.options || []} isMulti />;
+      case 'remote':
+        return (
+          <RemoteFormSelect
+            {...common}
+            service={f.remote.service}
+            params={f.remote.params}
+            toOption={f.remote.toOption}
+            isMulti={f.multiple}
+            placeholder={f.placeholder || 'Search…'}
+          />
+        );
       case 'number': return <FormInput {...common} type="number" />;
       case 'email': return <FormInput {...common} type="email" />;
       case 'time': return <FormInput {...common} type="time" />;

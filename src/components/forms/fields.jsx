@@ -150,7 +150,7 @@ export function FormSelect({
                 : options.find((o) => o.value === field.value) || null
             }
             onChange={(sel) =>
-              field.onChange(isMulti ? (sel || []).map((o) => o.value) : (sel?.value ?? null))
+              field.onChange(isMulti ? (sel || []).map((o) => o.value) : (sel?.value ?? ''))
             }
             onBlur={field.onBlur}
             styles={{ menuPortal: (base) => ({ ...base, zIndex: 60 }) }}

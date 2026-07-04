@@ -1,10 +1,15 @@
 import { z } from 'zod';
 import dayjs from 'dayjs';
+import { LuListChecks, LuGauge } from 'react-icons/lu';
 import { leaveService } from '@/services/modules';
 import { formatDate } from '@/utils/formatters';
 import ResourcePage from '@/components/common/ResourcePage';
+import PageHeader from '@/components/layout/PageHeader';
+import Tabs from '@/components/common/Tabs';
 import { StatusChip } from '@/components/common/Badge';
 import Badge from '@/components/common/Badge';
+import { employeeField } from '@/components/forms/refFields';
+import LeaveBalances from '@/pages/leave/LeaveBalances';
 
 const TYPES = ['ANNUAL', 'SICK', 'CASUAL', 'MATERNITY', 'PATERNITY', 'UNPAID'];
 const STATUSES = ['PENDING', 'APPROVED', 'REJECTED', 'CANCELLED'];
@@ -29,7 +34,7 @@ const columns = [
     header: 'Employee',
     cell: ({ row }) => (
       <span className="font-medium text-surface-900 dark:text-surface-100">
-        {row.original.employeeName || row.original.employee}
+        {row.original.employeeName || row.original.employee || '—'}
       </span>
     ),
   },
@@ -54,18 +59,18 @@ const columns = [
   { accessorKey: 'status', header: 'Status', cell: ({ getValue }) => <StatusChip status={getValue()} /> },
 ];
 
-export default function Leave() {
+function LeaveRequests() {
   return (
     <ResourcePage
-      title="Leave Management"
-      description="Requests, approvals and leave balances."
+      hideHeader
+      title="Leave Requests"
       service={leaveService}
       queryKey="leaves"
       columns={columns}
       schema={schema}
       defaults={{ employee: '', type: 'ANNUAL', startDate: '', endDate: '', reason: '', status: 'PENDING' }}
       fields={[
-        { name: 'employee', label: 'Employee', required: true, placeholder: 'Employee email or ID' },
+        employeeField(),
         { name: 'type', label: 'Leave type', type: 'select', native: true, options: TYPES.map((t) => ({ value: t, label: t })) },
         { name: 'startDate', label: 'Start date', type: 'date', required: true },
         { name: 'endDate', label: 'End date', type: 'date', required: true },
@@ -78,5 +83,24 @@ export default function Leave() {
       ]}
       createLabel="Request Leave"
     />
+  );
+}
+
+export default function Leave() {
+  return (
+    <div>
+      <PageHeader
+        title="Leave Management"
+        description="Requests, approvals and live leave balances."
+      />
+      <Tabs
+        tabs={[
+          { key: 'requests', label: 'Requests', icon: LuListChecks },
+          { key: 'balances', label: 'Balances', icon: LuGauge },
+        ]}
+      >
+        {(active) => (active === 'requests' ? <LeaveRequests /> : <LeaveBalances />)}
+      </Tabs>
+    </div>
   );
 }

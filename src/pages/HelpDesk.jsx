@@ -3,6 +3,7 @@ import { ticketService } from '@/services/modules';
 import { formatRelative } from '@/utils/formatters';
 import ResourcePage from '@/components/common/ResourcePage';
 import Badge, { StatusChip } from '@/components/common/Badge';
+import { userRefField } from '@/components/forms/refFields';
 
 const STATUSES = ['OPEN', 'IN_PROGRESS', 'ON_HOLD', 'CLOSED'];
 const PRIORITIES = ['LOW', 'MEDIUM', 'HIGH', 'URGENT'];
@@ -53,10 +54,10 @@ export default function HelpDesk() {
       defaults={{ subject: '', requester: '', category: 'IT Support', priority: 'MEDIUM', assignee: '', status: 'OPEN', description: '' }}
       fields={[
         { name: 'subject', label: 'Subject', required: true, colSpan: 2 },
-        { name: 'requester', label: 'Requester', required: true, placeholder: 'Employee email' },
+        userRefField('requester', 'Requester', { required: true }),
         { name: 'category', label: 'Category', type: 'select', native: true, options: CATEGORIES.map((c) => ({ value: c, label: c })) },
         { name: 'priority', label: 'Priority', type: 'select', native: true, options: PRIORITIES.map((p) => ({ value: p, label: p })) },
-        { name: 'assignee', label: 'Assignee' },
+        userRefField('assignee', 'Assignee'),
         { name: 'status', label: 'Status', type: 'select', native: true, options: STATUSES.map((s) => ({ value: s, label: s.replace('_', ' ') })) },
         { name: 'description', label: 'Description', type: 'textarea', required: true, colSpan: 2 },
       ]}

@@ -3,6 +3,7 @@ import { performanceService } from '@/services/modules';
 import { formatDate } from '@/utils/formatters';
 import ResourcePage from '@/components/common/ResourcePage';
 import Badge, { StatusChip } from '@/components/common/Badge';
+import { employeeField, userRefField } from '@/components/forms/refFields';
 
 const STATUSES = ['DRAFT', 'IN_PROGRESS', 'COMPLETED'];
 const CYCLES = ['Q1', 'Q2', 'Q3', 'Q4', 'ANNUAL'];
@@ -50,8 +51,8 @@ export default function Performance() {
       schema={schema}
       defaults={{ employee: '', cycle: 'Q1', reviewer: '', score: '', status: 'DRAFT', summary: '' }}
       fields={[
-        { name: 'employee', label: 'Employee', required: true, placeholder: 'Employee email or ID' },
-        { name: 'reviewer', label: 'Reviewer', required: true },
+        employeeField(),
+        userRefField('reviewer', 'Reviewer', { required: true }),
         { name: 'cycle', label: 'Cycle', type: 'select', native: true, options: CYCLES.map((c) => ({ value: c, label: c })) },
         { name: 'score', label: 'Overall score (0–5)', type: 'number' },
         { name: 'status', label: 'Status', type: 'select', native: true, options: STATUSES.map((s) => ({ value: s, label: s.replace('_', ' ') })) },

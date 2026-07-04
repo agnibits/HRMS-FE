@@ -3,6 +3,7 @@ import { payrollService } from '@/services/modules';
 import { formatCurrency } from '@/utils/formatters';
 import ResourcePage from '@/components/common/ResourcePage';
 import { StatusChip } from '@/components/common/Badge';
+import { employeeField } from '@/components/forms/refFields';
 
 const STATUSES = ['UNPAID', 'PROCESSING', 'PAID'];
 
@@ -50,7 +51,7 @@ export default function Payroll() {
       schema={schema}
       defaults={{ employee: '', period: '', gross: 0, deductions: 0, bonus: 0, status: 'UNPAID' }}
       fields={[
-        { name: 'employee', label: 'Employee', required: true, placeholder: 'Employee email or ID' },
+        employeeField(),
         { name: 'period', label: 'Pay period', required: true, placeholder: 'e.g. 2026-07' },
         { name: 'gross', label: 'Gross pay', type: 'number', required: true },
         { name: 'deductions', label: 'Deductions', type: 'number', required: true },

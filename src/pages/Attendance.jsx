@@ -3,6 +3,7 @@ import { attendanceService } from '@/services/modules';
 import { formatDate } from '@/utils/formatters';
 import ResourcePage from '@/components/common/ResourcePage';
 import { StatusChip } from '@/components/common/Badge';
+import { employeeField } from '@/components/forms/refFields';
 
 const STATUSES = ['PRESENT', 'ABSENT', 'LATE', 'HALF_DAY', 'ON_LEAVE'];
 
@@ -47,7 +48,7 @@ export default function Attendance() {
       schema={schema}
       defaults={{ employee: '', date: '', checkIn: '', checkOut: '', status: 'PRESENT', notes: '' }}
       fields={[
-        { name: 'employee', label: 'Employee', required: true, placeholder: 'Employee email or ID' },
+        employeeField(),
         { name: 'date', label: 'Date', type: 'date', required: true },
         { name: 'checkIn', label: 'Check-in time', type: 'time' },
         { name: 'checkOut', label: 'Check-out time', type: 'time' },

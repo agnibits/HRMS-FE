@@ -3,6 +3,7 @@ import { onboardingService } from '@/services/modules';
 import { formatDate } from '@/utils/formatters';
 import ResourcePage from '@/components/common/ResourcePage';
 import { StatusChip } from '@/components/common/Badge';
+import { employeeField, userRefField } from '@/components/forms/refFields';
 
 const STATUSES = ['NOT_STARTED', 'IN_PROGRESS', 'COMPLETED', 'ON_HOLD'];
 
@@ -59,10 +60,10 @@ export default function Onboarding() {
       schema={schema}
       defaults={{ employee: '', startDate: '', buddy: '', manager: '', status: 'NOT_STARTED', notes: '' }}
       fields={[
-        { name: 'employee', label: 'New hire', required: true, placeholder: 'Employee email or ID' },
+        employeeField({ label: 'New hire' }),
         { name: 'startDate', label: 'Start date', type: 'date', required: true },
-        { name: 'buddy', label: 'Onboarding buddy' },
-        { name: 'manager', label: 'Reporting manager' },
+        userRefField('buddy', 'Onboarding buddy'),
+        userRefField('manager', 'Reporting manager'),
         { name: 'status', label: 'Status', type: 'select', native: true, options: STATUSES.map((s) => ({ value: s, label: s.replace('_', ' ') })) },
         { name: 'notes', label: 'Notes', type: 'textarea', colSpan: 2 },
       ]}

@@ -3,6 +3,7 @@ import { expenseService } from '@/services/modules';
 import { formatDate, formatCurrency } from '@/utils/formatters';
 import ResourcePage from '@/components/common/ResourcePage';
 import Badge, { StatusChip } from '@/components/common/Badge';
+import { employeeField } from '@/components/forms/refFields';
 
 const STATUSES = ['PENDING', 'APPROVED', 'REJECTED', 'REIMBURSED'];
 const CATEGORIES = ['Travel', 'Meals', 'Equipment', 'Software', 'Training', 'Other'];
@@ -54,7 +55,7 @@ export default function Expenses() {
       defaults={{ title: '', employee: '', category: 'Travel', amount: '', date: '', status: 'PENDING', notes: '' }}
       fields={[
         { name: 'title', label: 'Title', required: true, colSpan: 2, placeholder: 'e.g. Client visit — airfare' },
-        { name: 'employee', label: 'Employee', required: true, placeholder: 'Employee email or ID' },
+        employeeField(),
         { name: 'category', label: 'Category', type: 'select', native: true, options: CATEGORIES.map((c) => ({ value: c, label: c })) },
         { name: 'amount', label: 'Amount', type: 'number', required: true },
         { name: 'date', label: 'Expense date', type: 'date', required: true },

@@ -5,6 +5,7 @@ import { formatDateTime } from '@/utils/formatters';
 import ResourcePage from '@/components/common/ResourcePage';
 import Calendar from '@/components/common/Calendar';
 import Badge, { StatusChip } from '@/components/common/Badge';
+import { candidateField } from '@/components/forms/refFields';
 
 const STATUSES = ['SCHEDULED', 'COMPLETED', 'CANCELLED', 'NO_SHOW'];
 const MODES = ['ONSITE', 'REMOTE', 'PHONE'];
@@ -68,7 +69,7 @@ export default function InterviewScheduling() {
       schema={schema}
       defaults={{ candidate: '', jobTitle: '', round: 'Screening', interviewer: '', scheduledAt: '', mode: 'REMOTE', status: 'SCHEDULED', notes: '' }}
       fields={[
-        { name: 'candidate', label: 'Candidate', required: true, placeholder: 'Candidate name or email' },
+        candidateField(),
         { name: 'jobTitle', label: 'Position' },
         { name: 'round', label: 'Round', type: 'select', native: true, options: ROUNDS.map((r) => ({ value: r, label: r })) },
         { name: 'interviewer', label: 'Interviewer', required: true },
