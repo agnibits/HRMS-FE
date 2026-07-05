@@ -5,8 +5,11 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import toast from 'react-hot-toast';
 import axios from 'axios';
+import { useDispatch } from 'react-redux';
 import { LuGlobe, LuImage, LuSettings, LuUpload } from 'react-icons/lu';
 import { companyService } from '@/services/modules';
+import { authService } from '@/services/authService';
+import { setCredentials } from '@/store/authSlice';
 import { API_URL } from '@/constants';
 import { tokenStorage } from '@/utils/storage';
 import PageHeader from '@/components/layout/PageHeader';
@@ -59,6 +62,7 @@ export default function CompanySettings() {
   });
 
   const queryClient = useQueryClient();
+  const dispatch = useDispatch();
 
   const mutation = useMutation({
     mutationFn: (values) =>
@@ -72,22 +76,30 @@ export default function CompanySettings() {
       ),
   });
 
-  // Logo upload — multipart PUT so the browser sets the correct boundary.
+  // Logo upload — multipart POST /companies/:id/logo (plain axios so the
+  // browser sets the multipart boundary).
   const uploadLogo = useMutation({
     mutationFn: async (file) => {
       if (!existing?.id) throw new Error('Save your company profile first.');
       const form = new FormData();
       form.append('logo', file);
-      const res = await axios.put(`${API_URL}/companies/${existing.id}`, form, {
+      const res = await axios.post(`${API_URL}/companies/${existing.id}/logo`, form, {
         headers: { Authorization: `Bearer ${tokenStorage.getAccess()}` },
       });
       return res.data;
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       toast.success('Logo updated — it now shows in the sidebar.');
       setLogo(null);
       companyQuery.refetch();
       queryClient.invalidateQueries({ queryKey: ['company', 'current'] });
+      // Refresh the auth user so user.company.logoUrl (sidebar/header) updates now.
+      try {
+        const me = await authService.me();
+        if (me) dispatch(setCredentials(me));
+      } catch {
+        /* non-fatal — sidebar will refresh on next load */
+      }
     },
     onError: (err) =>
       toast.error(
