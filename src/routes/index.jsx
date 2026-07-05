@@ -35,6 +35,7 @@ const Notifications = lazy(() => import('@/pages/Notifications'));
 const CompanySettings = lazy(() => import('@/pages/settings/CompanySettings'));
 const RolesPermissions = lazy(() => import('@/pages/settings/RolesPermissions'));
 const AuditLogs = lazy(() => import('@/pages/AuditLogs'));
+const Companies = lazy(() => import('@/pages/platform/Companies'));
 const Profile = lazy(() => import('@/pages/profile/Profile'));
 const ChangePassword = lazy(() => import('@/pages/profile/ChangePassword'));
 const NotFound = lazy(() => import('@/pages/NotFound'));
@@ -57,6 +58,7 @@ export function AppRoutes() {
           <Route element={<DashboardLayout />}>
             <Route path="/" element={<Dashboard />} />
             <Route path="/analytics" element={<Analytics />} />
+            <Route path="/platform/companies" element={<Companies />} />
 
             <Route
               path="/employees"

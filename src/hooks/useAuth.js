@@ -21,7 +21,8 @@ export function useAuth() {
   const permissions = useSelector(selectPermissions);
   const roles = useSelector(selectRoles);
 
-  const isAdmin = roles.includes('SUPER_ADMIN') || roles.includes('ADMIN');
+  const isSuperAdmin = roles.includes('SUPER_ADMIN');
+  const isAdmin = isSuperAdmin || roles.includes('ADMIN');
 
   /** hasPermission('user:create') — admins pass everything. */
   const hasPermission = useCallback(
@@ -65,6 +66,7 @@ export function useAuth() {
     permissions,
     roles,
     isAdmin,
+    isSuperAdmin,
     isAuthenticated: status === 'authenticated',
     hasPermission,
     hasRole,
