@@ -9,6 +9,7 @@ export const departmentService = createResourceService('departments');
 export const designationService = createResourceService('designations');
 export const attendanceService = createResourceService('attendance');
 export const leaveService = createResourceService('leaves');
+export const leaveTypeService = createResourceService('leave-types');
 export const holidayService = createResourceService('holidays');
 export const payrollService = createResourceService('payroll');
 export const jobService = createResourceService('jobs');
