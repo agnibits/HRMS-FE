@@ -13,6 +13,7 @@ import { titleCase } from '@/utils/formatters';
 import cn from '@/utils/cn';
 import { IconButton } from '@/components/common/Button';
 import Spinner from '@/components/common/Spinner';
+import Markdown from './Markdown';
 
 const QUICK_PROMPTS = [
   { icon: LuBriefcaseBusiness, label: 'Write a job description', prompt: 'Write a professional job description for a Senior Software Engineer (remote, full-time). Include responsibilities, requirements and a short about-the-role intro.' },
@@ -27,13 +28,13 @@ function Bubble({ role, content }) {
     <div className={cn('flex', isUser ? 'justify-end' : 'justify-start')}>
       <div
         className={cn(
-          'max-w-[85%] whitespace-pre-wrap rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed',
+          'max-w-[85%] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed',
           isUser
-            ? 'rounded-br-md bg-primary-600 text-white'
+            ? 'whitespace-pre-wrap rounded-br-md bg-primary-600 text-white'
             : 'rounded-bl-md bg-surface-100 text-surface-800 dark:bg-surface-800 dark:text-surface-100'
         )}
       >
-        {content}
+        {isUser ? content : <Markdown content={content} />}
       </div>
     </div>
   );
