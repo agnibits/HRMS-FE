@@ -2,19 +2,13 @@ import {
   LuLayoutDashboard, LuUsersRound, LuBuilding2, LuBadgeCheck, LuClock, LuCalendarDays,
   LuTreePalm, LuWallet, LuBriefcaseBusiness, LuUserRoundPlus, LuTrendingUp, LuGoal,
   LuGraduationCap, LuLaptop, LuReceipt, LuLifeBuoy, LuFolderOpen, LuBell,
-  LuFileChartColumn, LuChartPie, LuSettings, LuShieldCheck, LuScrollText, LuBuilding,
+  LuFileChartColumn, LuChartPie, LuSettings, LuShieldCheck, LuScrollText,
 } from 'react-icons/lu';
 
 /**
  * Sidebar navigation, grouped. `permission` hides items the user can't access.
  */
 export const NAVIGATION = [
-  {
-    group: 'Platform',
-    items: [
-      { label: 'Companies', to: '/platform/companies', icon: LuBuilding, superAdmin: true },
-    ],
-  },
   {
     group: 'Overview',
     items: [

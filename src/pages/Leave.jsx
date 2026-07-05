@@ -11,7 +11,16 @@ import ResourcePage from '@/components/common/ResourcePage';
 import Badge, { StatusChip } from '@/components/common/Badge';
 
 const STATUSES = ['PENDING', 'APPROVED', 'REJECTED', 'CANCELLED'];
-const BADGE_COLORS = ['blue', 'green', 'red', 'amber', 'orange', 'purple', 'violet', 'teal', 'gray'];
+
+/** Chip that takes a raw hex color (backend stores leave-type colors as hex). */
+function TypeChip({ color, children }) {
+  return (
+    <span className="inline-flex items-center gap-1.5 rounded-full bg-surface-100 px-2.5 py-0.5 text-xs font-medium text-surface-700 dark:bg-surface-800 dark:text-surface-200">
+      <span className="size-2 rounded-full" style={{ background: color || '#64748b' }} />
+      {children}
+    </span>
+  );
+}
 
 /* ---------------- Requests tab ---------------- */
 
@@ -45,9 +54,7 @@ function LeaveRequests() {
     {
       accessorKey: 'type',
       header: 'Type',
-      cell: ({ getValue }) => (
-        <Badge color={colorByCode[getValue()] || 'purple'}>{getValue()}</Badge>
-      ),
+      cell: ({ getValue }) => <TypeChip color={colorByCode[getValue()]}>{getValue()}</TypeChip>,
     },
     {
       accessorKey: 'startDate',
@@ -115,7 +122,7 @@ function LeavePolicy() {
       header: 'Leave Type',
       cell: ({ row }) => (
         <div className="flex items-center gap-2.5">
-          <Badge color={row.original.color || 'purple'}>{row.original.code}</Badge>
+          <TypeChip color={row.original.color}>{row.original.code}</TypeChip>
           <span className="font-medium text-surface-900 dark:text-surface-100">{row.original.name}</span>
         </div>
       ),
@@ -152,13 +159,13 @@ function LeavePolicy() {
       queryKey="leave-types"
       columns={columns}
       schema={schema}
-      defaults={{ name: '', code: '', daysPerYear: 0, paid: true, carryForward: false, maxCarryForward: 0, color: 'blue', status: 'ACTIVE' }}
+      defaults={{ name: '', code: '', daysPerYear: 0, paid: true, carryForward: false, maxCarryForward: 0, color: '#22c55e', status: 'ACTIVE' }}
       transformSubmit={(v) => ({ ...v, code: (v.code || '').toUpperCase().replace(/\s+/g, '_') })}
       fields={[
         { name: 'name', label: 'Leave type name', required: true, placeholder: 'e.g. Annual Leave' },
         { name: 'code', label: 'Code', required: true, placeholder: 'e.g. ANNUAL', hint: 'Short uppercase key' },
         { name: 'daysPerYear', label: 'Days allocated per year', type: 'number', required: true },
-        { name: 'color', label: 'Badge color', type: 'select', native: true, options: BADGE_COLORS.map((c) => ({ value: c, label: c[0].toUpperCase() + c.slice(1) })) },
+        { name: 'color', label: 'Badge color', type: 'color' },
         { name: 'paid', label: 'Paid leave (employee is paid during this leave)', type: 'checkbox', colSpan: 2 },
         { name: 'carryForward', label: 'Allow unused days to carry forward to next year', type: 'checkbox', colSpan: 2 },
         { name: 'maxCarryForward', label: 'Max days that can carry forward', type: 'number', hint: '0 = unlimited' },

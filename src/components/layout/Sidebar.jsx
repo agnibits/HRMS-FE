@@ -25,13 +25,11 @@ function BrandMark({ collapsed }) {
 }
 
 function NavItems({ collapsed, onNavigate }) {
-  const { hasPermission, isSuperAdmin } = useAuth();
+  const { hasPermission } = useAuth();
   return (
     <nav className="flex-1 space-y-5 overflow-y-auto px-3 pb-6" aria-label="Main navigation">
       {NAVIGATION.map((group) => {
-        const items = group.items.filter(
-          (i) => (i.superAdmin ? isSuperAdmin : true) && hasPermission(i.permission)
-        );
+        const items = group.items.filter((i) => hasPermission(i.permission));
         if (!items.length) return null;
         return (
           <div key={group.group}>

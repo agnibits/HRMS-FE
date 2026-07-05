@@ -162,6 +162,47 @@ export function FormSelect({
   );
 }
 
+const COLOR_PRESETS = ['#22c55e', '#3b82f6', '#8b5cf6', '#f59e0b', '#ef4444', '#14b8a6', '#ec4899', '#64748b'];
+
+/** Hex color picker bound to RHF — native swatch + preset dots. Stores a hex string. */
+export function FormColor({ form, name, label, required, hint, className }) {
+  const error = fieldError(form.formState.errors, name);
+  return (
+    <FieldWrapper label={label} required={required} error={error} hint={hint} className={className}>
+      <Controller
+        control={form.control}
+        name={name}
+        render={({ field }) => (
+          <div className="flex flex-wrap items-center gap-3">
+            <input
+              type="color"
+              value={field.value || '#22c55e'}
+              onChange={(e) => field.onChange(e.target.value)}
+              className="h-9 w-12 cursor-pointer rounded-lg border border-surface-300 bg-white p-0.5 dark:border-surface-700 dark:bg-surface-850"
+              aria-label="Pick a color"
+            />
+            <div className="flex flex-wrap gap-1.5">
+              {COLOR_PRESETS.map((c) => (
+                <button
+                  key={c}
+                  type="button"
+                  onClick={() => field.onChange(c)}
+                  aria-label={c}
+                  className={cn(
+                    'size-6 rounded-full ring-2 ring-offset-1 ring-offset-white transition-transform hover:scale-110 dark:ring-offset-surface-900',
+                    (field.value || '').toLowerCase() === c ? 'ring-surface-400 dark:ring-surface-500' : 'ring-transparent'
+                  )}
+                  style={{ background: c }}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+      />
+    </FieldWrapper>
+  );
+}
+
 /** Native select for short enum lists (lighter than react-select). */
 export function FormNativeSelect({ form, name, label, required, hint, options = [], className, placeholder }) {
   const error = fieldError(form.formState.errors, name);

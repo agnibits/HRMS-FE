@@ -19,7 +19,7 @@ import FileUpload from '@/components/forms/FileUpload';
 import RemoteFormSelect from '@/components/forms/RemoteFormSelect';
 import {
   FormInput, FormPassword, FormTextarea, FormDate, FormCheckbox, FormSelect,
-  FormNativeSelect, FieldWrapper,
+  FormNativeSelect, FormColor, FieldWrapper,
 } from '@/components/forms/fields';
 
 /**
@@ -206,6 +206,7 @@ export function ResourcePage({
           />
         );
       case 'number': return <FormInput {...common} type="number" />;
+      case 'color': return <FormColor {...common} />;
       case 'email': return <FormInput {...common} type="email" />;
       case 'time': return <FormInput {...common} type="time" />;
       case 'file':

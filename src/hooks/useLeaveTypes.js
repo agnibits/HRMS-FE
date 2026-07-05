@@ -9,12 +9,12 @@ import { leaveTypeService } from '@/services/modules';
  * own policy, the request form and filters use those types automatically.
  */
 const DEFAULTS = [
-  { code: 'ANNUAL', name: 'Annual', color: 'blue' },
-  { code: 'SICK', name: 'Sick', color: 'red' },
-  { code: 'CASUAL', name: 'Casual', color: 'teal' },
-  { code: 'MATERNITY', name: 'Maternity', color: 'purple' },
-  { code: 'PATERNITY', name: 'Paternity', color: 'violet' },
-  { code: 'UNPAID', name: 'Unpaid', color: 'gray' },
+  { code: 'ANNUAL', name: 'Annual', color: '#3b82f6' },
+  { code: 'SICK', name: 'Sick', color: '#ef4444' },
+  { code: 'CASUAL', name: 'Casual', color: '#14b8a6' },
+  { code: 'MATERNITY', name: 'Maternity', color: '#8b5cf6' },
+  { code: 'PATERNITY', name: 'Paternity', color: '#a855f7' },
+  { code: 'UNPAID', name: 'Unpaid', color: '#64748b' },
 ];
 
 export function useLeaveTypes() {
@@ -35,7 +35,7 @@ export function useLeaveTypes() {
   );
   const codes = useMemo(() => types.map((t) => t.code), [types]);
   const colorByCode = useMemo(
-    () => Object.fromEntries(types.map((t) => [t.code, t.color || 'purple'])),
+    () => Object.fromEntries(types.map((t) => [t.code, t.color || '#64748b'])),
     [types]
   );
 
