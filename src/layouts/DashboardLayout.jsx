@@ -2,6 +2,7 @@ import { Outlet } from 'react-router-dom';
 import Sidebar from '@/components/layout/Sidebar';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
+import AiAssistant from '@/components/ai/AiAssistant';
 
 export function DashboardLayout() {
   return (
@@ -16,6 +17,7 @@ export function DashboardLayout() {
         </main>
         <Footer />
       </div>
+      <AiAssistant />
     </div>
   );
 }

@@ -1,11 +1,11 @@
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import {
-  LuBell, LuKeyRound, LuLogOut, LuMenu, LuMoon, LuPanelLeft, LuSun, LuUserRound,
+  LuBell, LuKeyRound, LuLogOut, LuMenu, LuMoon, LuPanelLeft, LuSparkles, LuSun, LuUserRound,
 } from 'react-icons/lu';
 import { useTheme } from '@/context/ThemeContext';
 import { useAuth } from '@/hooks/useAuth';
-import { toggleSidebar, setSidebarMobileOpen } from '@/store/uiSlice';
+import { toggleSidebar, setSidebarMobileOpen, setAiOpen } from '@/store/uiSlice';
 import { fullName } from '@/utils/formatters';
 import Avatar from '@/components/common/Avatar';
 import Dropdown from '@/components/common/Dropdown';
@@ -34,6 +34,13 @@ export function Navbar() {
       />
 
       <div className="ml-auto flex items-center gap-1.5 sm:gap-2">
+        <button
+          onClick={() => dispatch(setAiOpen(true))}
+          className="flex items-center gap-1.5 rounded-full border border-primary-200 bg-primary-50 px-3 py-1.5 text-sm font-medium text-primary-700 transition-colors hover:bg-primary-100 dark:border-primary-800/60 dark:bg-primary-950/50 dark:text-primary-300 dark:hover:bg-primary-900/50"
+        >
+          <LuSparkles className="size-4" />
+          <span className="hidden sm:inline">Ask AI</span>
+        </button>
         <IconButton
           icon={theme === 'dark' ? LuSun : LuMoon}
           label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
