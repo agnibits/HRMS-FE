@@ -6,18 +6,32 @@ import cn from '@/utils/cn';
 import { APP_NAME } from '@/constants';
 import { NAVIGATION } from '@/constants/navigation';
 import { useAuth } from '@/hooks/useAuth';
+import { useCurrentCompany } from '@/hooks/useCurrentCompany';
 import { selectSidebarCollapsed, selectSidebarMobileOpen, setSidebarMobileOpen } from '@/store/uiSlice';
 import { IconButton } from '@/components/common/Button';
 
 function BrandMark({ collapsed }) {
+  const { company } = useCurrentCompany();
+  const name = company?.name || APP_NAME;
+  const logo = company?.logoUrl || company?.logo;
+  const initial = (name.trim()[0] || 'A').toUpperCase();
+
   return (
     <div className="flex h-16 items-center gap-2.5 px-5">
-      <span className="flex size-8 shrink-0 items-center justify-center rounded-[10px] bg-gradient-to-br from-primary-500 to-primary-700 text-sm font-bold text-white shadow-[inset_0_1px_0_rgb(255_255_255/0.2),0_2px_6px_rgb(16_132_97/0.35)]">
-        A
-      </span>
+      {logo ? (
+        <img
+          src={logo}
+          alt={name}
+          className="size-8 shrink-0 rounded-[10px] object-cover ring-1 ring-surface-200 dark:ring-surface-700"
+        />
+      ) : (
+        <span className="flex size-8 shrink-0 items-center justify-center rounded-[10px] bg-gradient-to-br from-primary-500 to-primary-700 text-sm font-bold text-white shadow-[inset_0_1px_0_rgb(255_255_255/0.2),0_2px_6px_rgb(16_132_97/0.35)]">
+          {initial}
+        </span>
+      )}
       {!collapsed && (
-        <span className="truncate text-[15px] font-bold tracking-tight text-surface-900 dark:text-white">
-          {APP_NAME}
+        <span className="truncate text-[15px] font-bold tracking-tight text-surface-900 dark:text-white" title={name}>
+          {name}
         </span>
       )}
     </div>
