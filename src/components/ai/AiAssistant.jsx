@@ -5,11 +5,13 @@ import { AnimatePresence, motion } from 'framer-motion';
 import {
   LuSparkles, LuX, LuSendHorizontal, LuBriefcaseBusiness, LuFileText,
   LuUserRoundSearch, LuCalendarDays, LuRotateCcw, LuTriangleAlert,
+  LuPaperclip, LuFileCheck,
 } from 'react-icons/lu';
 import { aiService } from '@/services/aiService';
 import { useAuth } from '@/hooks/useAuth';
 import { setAiOpen, selectAiOpen } from '@/store/uiSlice';
 import { titleCase } from '@/utils/formatters';
+import { extractTextFromFile, RESUME_ACCEPT } from '@/utils/extractText';
 import cn from '@/utils/cn';
 import { IconButton } from '@/components/common/Button';
 import Spinner from '@/components/common/Spinner';
@@ -22,8 +24,9 @@ const QUICK_PROMPTS = [
   { icon: LuCalendarDays, label: 'Leave & holiday policy', prompt: 'Explain how annual leave accrual and public holidays typically work in an HR policy, in simple terms.' },
 ];
 
-function Bubble({ role, content }) {
+function Bubble({ role, text, content, attachmentName }) {
   const isUser = role === 'user';
+  const shown = text ?? content;
   return (
     <div className={cn('flex', isUser ? 'justify-end' : 'justify-start')}>
       <div
@@ -34,7 +37,12 @@ function Bubble({ role, content }) {
             : 'rounded-bl-md bg-surface-100 text-surface-800 dark:bg-surface-800 dark:text-surface-100'
         )}
       >
-        {isUser ? content : <Markdown content={content} />}
+        {attachmentName && (
+          <span className="mb-1.5 flex items-center gap-1.5 rounded-lg bg-white/15 px-2 py-1 text-xs font-medium">
+            <LuFileCheck className="size-3.5" /> {attachmentName}
+          </span>
+        )}
+        {isUser ? shown : <Markdown content={shown} />}
       </div>
     </div>
   );
@@ -49,11 +57,40 @@ export function AiAssistant() {
   const [input, setInput] = useState('');
   const [pending, setPending] = useState(false);
   const [error, setError] = useState(null);
+  const [attachment, setAttachment] = useState(null); // { name, text }
+  const [extracting, setExtracting] = useState(false);
   const scrollRef = useRef(null);
   const inputRef = useRef(null);
+  const fileRef = useRef(null);
 
   const close = () => dispatch(setAiOpen(false));
-  const reset = () => { setMessages([]); setError(null); };
+  const reset = () => { setMessages([]); setError(null); setAttachment(null); };
+
+  const onPickFile = async (e) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+    if (file.size > 8 * 1024 * 1024) {
+      setError('File is too large (max 8 MB).');
+      return;
+    }
+    setError(null);
+    setExtracting(true);
+    try {
+      const text = await extractTextFromFile(file);
+      if (!text || text.length < 20) {
+        setError('Couldn’t read text from that file. It may be a scanned image — try a text-based PDF or paste the text.');
+        setAttachment(null);
+      } else {
+        setAttachment({ name: file.name, text });
+      }
+    } catch (err) {
+      setError(err.message || 'Could not read that file.');
+      setAttachment(null);
+    } finally {
+      setExtracting(false);
+    }
+  };
 
   useEffect(() => {
     if (isOpen) setTimeout(() => inputRef.current?.focus(), 200);
@@ -70,12 +107,21 @@ export function AiAssistant() {
   }); // eslint-disable-line react-hooks/exhaustive-deps
 
   const send = async (text) => {
-    const content = (text ?? input).trim();
-    if (!content || pending) return;
+    const typed = (text ?? input).trim();
+    if ((!typed && !attachment) || pending) return;
     setError(null);
-    const next = [...messages, { role: 'user', content }];
+
+    // Build the message: what the user sees vs. what the model receives.
+    const display = typed || (attachment ? 'Screen this resume.' : '');
+    const content = attachment
+      ? `${typed || 'Please screen this resume against the role and give a match score out of 10 with strengths and gaps.'}\n\n--- RESUME (${attachment.name}) ---\n${attachment.text}`
+      : typed;
+
+    const userMsg = { role: 'user', content, text: display, attachmentName: attachment?.name };
+    const next = [...messages, userMsg];
     setMessages(next);
     setInput('');
+    setAttachment(null);
     setPending(true);
     try {
       const context = `Page: ${titleCase(location.pathname.split('/').filter(Boolean).slice(-1)[0] || 'dashboard')}`;
@@ -198,10 +244,56 @@ export function AiAssistant() {
 
               {/* Composer */}
               <div className="border-t border-surface-200 p-3 dark:border-surface-800">
+                {/* Attachment / extracting chip */}
+                {(attachment || extracting) && (
+                  <div className="mb-2 flex items-center gap-2 rounded-lg border border-surface-200 bg-surface-50 px-3 py-2 text-sm dark:border-surface-700 dark:bg-surface-850">
+                    {extracting ? (
+                      <>
+                        <Spinner size="sm" />
+                        <span className="text-surface-500">Reading file…</span>
+                      </>
+                    ) : (
+                      <>
+                        <LuFileCheck className="size-4 shrink-0 text-primary-600 dark:text-primary-400" />
+                        <span className="grow truncate text-surface-700 dark:text-surface-200">{attachment.name}</span>
+                        <span className="shrink-0 text-xs text-surface-400">
+                          {Math.round(attachment.text.length / 100) / 10}k chars
+                        </span>
+                        <button
+                          type="button"
+                          aria-label="Remove file"
+                          onClick={() => setAttachment(null)}
+                          className="shrink-0 rounded p-0.5 text-surface-400 hover:text-red-500"
+                        >
+                          <LuX className="size-4" />
+                        </button>
+                      </>
+                    )}
+                  </div>
+                )}
+
+                <input
+                  ref={fileRef}
+                  type="file"
+                  accept={RESUME_ACCEPT}
+                  className="hidden"
+                  onChange={onPickFile}
+                />
+
                 <form
                   onSubmit={(e) => { e.preventDefault(); send(); }}
-                  className="flex items-end gap-2 rounded-2xl border border-surface-300 bg-white p-1.5 pl-3 focus-within:border-primary-500 focus-within:ring-2 focus-within:ring-primary-500/20 dark:border-surface-700 dark:bg-surface-850"
+                  className="flex items-end gap-1.5 rounded-2xl border border-surface-300 bg-white p-1.5 pl-1.5 focus-within:border-primary-500 focus-within:ring-2 focus-within:ring-primary-500/20 dark:border-surface-700 dark:bg-surface-850"
                 >
+                  <button
+                    type="button"
+                    onClick={() => fileRef.current?.click()}
+                    disabled={extracting}
+                    title="Attach a resume (PDF, DOCX, TXT)"
+                    aria-label="Attach a file"
+                    className="flex size-9 shrink-0 items-center justify-center rounded-xl text-surface-400 transition-colors hover:bg-surface-100 hover:text-surface-600 disabled:opacity-40 dark:hover:bg-surface-800 dark:hover:text-surface-200"
+                  >
+                    <LuPaperclip className="size-4.5" />
+                  </button>
                   <textarea
                     ref={inputRef}
                     rows={1}
@@ -210,12 +302,12 @@ export function AiAssistant() {
                     onKeyDown={(e) => {
                       if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); }
                     }}
-                    placeholder="Ask anything about HR…"
+                    placeholder={attachment ? 'Add a note or just send…' : 'Ask anything about HR…'}
                     className="max-h-32 grow resize-none bg-transparent py-1.5 text-sm text-surface-900 placeholder-surface-400 focus:outline-none dark:text-surface-100"
                   />
                   <button
                     type="submit"
-                    disabled={!input.trim() || pending}
+                    disabled={(!input.trim() && !attachment) || pending || extracting}
                     className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary-600 text-white transition-colors hover:bg-primary-700 disabled:cursor-not-allowed disabled:opacity-40"
                     aria-label="Send"
                   >
@@ -223,7 +315,7 @@ export function AiAssistant() {
                   </button>
                 </form>
                 <p className="mt-2 text-center text-[11px] text-surface-400">
-                  AI can make mistakes. Verify important HR decisions.
+                  Attach a resume to screen it · AI can make mistakes.
                 </p>
               </div>
             </motion.aside>
