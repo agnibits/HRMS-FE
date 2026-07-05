@@ -1,16 +1,20 @@
 import { useState } from 'react';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import toast from 'react-hot-toast';
-import { LuGlobe, LuImage, LuSettings } from 'react-icons/lu';
+import axios from 'axios';
+import { LuGlobe, LuImage, LuSettings, LuUpload } from 'react-icons/lu';
 import { companyService } from '@/services/modules';
+import { API_URL } from '@/constants';
+import { tokenStorage } from '@/utils/storage';
 import PageHeader from '@/components/layout/PageHeader';
 import { Card, CardHeader, CardBody } from '@/components/cards/Card';
 import { FormInput, FormNativeSelect, FormTextarea } from '@/components/forms/fields';
 import FormShell from '@/components/forms/FormShell';
 import FileUpload from '@/components/forms/FileUpload';
+import Button from '@/components/common/Button';
 
 const schema = z.object({
   name: z.string().min(2, 'Company name is required'),
@@ -54,6 +58,8 @@ export default function CompanySettings() {
     },
   });
 
+  const queryClient = useQueryClient();
+
   const mutation = useMutation({
     mutationFn: (values) =>
       existing ? companyService.update(existing.id, values) : companyService.create(values),
@@ -63,6 +69,31 @@ export default function CompanySettings() {
         err?.status === 404
           ? 'The company settings module is not enabled on the server yet.'
           : err.message
+      ),
+  });
+
+  // Logo upload — multipart PUT so the browser sets the correct boundary.
+  const uploadLogo = useMutation({
+    mutationFn: async (file) => {
+      if (!existing?.id) throw new Error('Save your company profile first.');
+      const form = new FormData();
+      form.append('logo', file);
+      const res = await axios.put(`${API_URL}/companies/${existing.id}`, form, {
+        headers: { Authorization: `Bearer ${tokenStorage.getAccess()}` },
+      });
+      return res.data;
+    },
+    onSuccess: () => {
+      toast.success('Logo updated — it now shows in the sidebar.');
+      setLogo(null);
+      companyQuery.refetch();
+      queryClient.invalidateQueries({ queryKey: ['company', 'current'] });
+    },
+    onError: (err) =>
+      toast.error(
+        err?.response?.status === 404
+          ? 'Logo upload isn’t enabled on the server yet.'
+          : err?.response?.data?.error?.message || err?.message || 'Logo upload failed.'
       ),
   });
 
@@ -106,15 +137,44 @@ export default function CompanySettings() {
         <div className="space-y-6">
           <Card>
             <CardHeader title="Branding" description="Your logo appears in the sidebar and emails." />
-            <CardBody>
+            <CardBody className="space-y-4">
+              {(existing?.logoUrl || existing?.logo) && (
+                <div className="flex items-center gap-3 rounded-xl border border-surface-200 bg-surface-50 p-3 dark:border-surface-700 dark:bg-surface-850">
+                  <img
+                    src={existing.logoUrl || existing.logo}
+                    alt="Company logo"
+                    className="size-12 rounded-lg object-cover ring-1 ring-surface-200 dark:ring-surface-700"
+                  />
+                  <div>
+                    <p className="text-sm font-medium text-surface-800 dark:text-surface-200">Current logo</p>
+                    <p className="text-xs text-surface-400">Shown across the app & sidebar</p>
+                  </div>
+                </div>
+              )}
+
               <FileUpload
                 value={logo}
                 onChange={setLogo}
                 accept=".png,.svg,.jpg,.jpeg"
                 maxSizeMb={2}
                 label="Upload company logo"
-                hint="PNG or SVG, up to 2 MB"
+                hint="PNG, SVG or JPG, up to 2 MB"
               />
+
+              <Button
+                fullWidth
+                leftIcon={LuUpload}
+                disabled={!logo || !existing}
+                loading={uploadLogo.isPending}
+                onClick={() => uploadLogo.mutate(logo)}
+              >
+                {existing?.logoUrl ? 'Replace logo' : 'Save logo'}
+              </Button>
+              {!existing && (
+                <p className="text-xs text-amber-600 dark:text-amber-400">
+                  Save your company profile first, then upload a logo.
+                </p>
+              )}
             </CardBody>
           </Card>
 
