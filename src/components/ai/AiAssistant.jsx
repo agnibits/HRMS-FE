@@ -141,7 +141,7 @@ export function AiAssistant() {
                   </span>
                   <div>
                     <h2 className="text-sm font-semibold text-surface-900 dark:text-surface-100">HR Assistant</h2>
-                    <p className="text-xs text-surface-400">Powered by Gemini</p>
+                    <p className="text-xs text-surface-400">Powered by Groq</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-1">

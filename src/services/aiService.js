@@ -1,9 +1,9 @@
 import { request } from '@/api/client';
 
 /**
- * AI features — powered by Google Gemini (free tier) on the backend.
+ * AI features — powered by Groq (free tier, Llama models) on the backend.
  * All endpoints live under /ai/* and return the standard { data } envelope.
- * Chat is a simple request/response (Gemini Flash is fast); the reply text
+ * Chat is a simple request/response (Groq is very fast); the reply text
  * comes back as data.reply.
  */
 export const aiService = {
