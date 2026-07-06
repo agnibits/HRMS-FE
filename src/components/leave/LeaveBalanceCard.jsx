@@ -1,7 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { LuTreePalm } from 'react-icons/lu';
 import { leaveService } from '@/services/modules';
-import { useLeaveTypes } from '@/hooks/useLeaveTypes';
 import { Card, CardHeader, CardBody } from '@/components/cards/Card';
 import EmptyState from '@/components/common/EmptyState';
 import ErrorState from '@/components/common/ErrorState';
@@ -17,8 +16,6 @@ function pct(a, b) {
  * Reads GET /leaves/balance?employee=<id> → [{ type, allocated, used, pending, remaining, available }].
  */
 export function LeaveBalanceCard({ employeeId, title = 'Leave balance', description = 'Allocated, used and remaining days per leave type.' }) {
-  const { colorByCode } = useLeaveTypes();
-
   const query = useQuery({
     queryKey: ['leaves', 'balance', employeeId],
     queryFn: () => leaveService.balance(employeeId),
@@ -51,7 +48,7 @@ export function LeaveBalanceCard({ employeeId, title = 'Leave balance', descript
               const used = b.used ?? 0;
               const pending = b.pending ?? 0;
               const remaining = b.remaining ?? b.available ?? Math.max(0, allocated - used - pending);
-              const color = colorByCode[code] || '#64748b';
+              const color = b.color || '#64748b';
               return (
                 <li key={code}>
                   <div className="mb-1.5 flex items-center justify-between text-sm">
