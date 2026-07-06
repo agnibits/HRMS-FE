@@ -9,7 +9,7 @@ import { userService } from '@/services/userService';
 import { roleService } from '@/services/roleService';
 import { auditService } from '@/services/auditService';
 import { useAuth } from '@/hooks/useAuth';
-import { QUERY_KEYS, PERMISSIONS } from '@/constants';
+import { QUERY_KEYS, PERMISSIONS, isTenantRole } from '@/constants';
 import { fullName, formatDate, formatDateTime, formatRelative, titleCase } from '@/utils/formatters';
 import PageHeader from '@/components/layout/PageHeader';
 import { Card, CardHeader, CardBody } from '@/components/cards/Card';
@@ -84,7 +84,7 @@ export default function EmployeeProfile() {
   if (userQuery.error) return <ErrorState error={userQuery.error} onRetry={() => userQuery.refetch()} />;
 
   const user = userQuery.data?.data;
-  const allRoles = rolesQuery.data?.data || [];
+  const allRoles = (rolesQuery.data?.data || []).filter(isTenantRole);
   const assignedIds = new Set((pendingRoles ?? (user.roles || []).map((r) => r.id)));
 
   const toggleRole = (roleId) => {

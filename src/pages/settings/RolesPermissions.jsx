@@ -7,7 +7,7 @@ import toast from 'react-hot-toast';
 import { LuPencilLine, LuLock, LuPlus, LuShieldCheck, LuTrash2 } from 'react-icons/lu';
 import { roleService } from '@/services/roleService';
 import { useAuth } from '@/hooks/useAuth';
-import { QUERY_KEYS, PERMISSIONS } from '@/constants';
+import { QUERY_KEYS, PERMISSIONS, isTenantRole } from '@/constants';
 import { titleCase } from '@/utils/formatters';
 import PageHeader from '@/components/layout/PageHeader';
 import { Card, CardBody } from '@/components/cards/Card';
@@ -44,7 +44,8 @@ export default function RolesPermissions() {
     queryFn: () => roleService.permissions(),
   });
 
-  const roles = rolesQuery.data?.data || [];
+  // Hide platform-only roles (SUPER_ADMIN) — those belong to the vendor, not tenants.
+  const roles = (rolesQuery.data?.data || []).filter(isTenantRole);
   // Backend shape: { wildcard, total, groups: { user: [{ key, permission, action }, ...], ... } }
   const catalog = useMemo(() => {
     const raw = catalogQuery.data?.data;
@@ -127,7 +128,7 @@ export default function RolesPermissions() {
     <div>
       <PageHeader
         title="Roles & Permissions"
-        description="Define what each role can access across the platform."
+        description="Define what each role can access across your organization."
         actions={canCreate && <Button leftIcon={LuPlus} onClick={openCreate}>New Role</Button>}
       />
 

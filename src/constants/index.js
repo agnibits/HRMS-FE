@@ -3,6 +3,14 @@ export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000/ap
 
 export const USER_STATUSES = ['PENDING', 'ACTIVE', 'SUSPENDED', 'DISABLED'];
 
+/**
+ * Platform-only roles that belong to Agnibits (the vendor), never to a tenant
+ * company. Hidden from tenant role lists and role assignment — a company's
+ * roles start at ADMIN.
+ */
+export const PLATFORM_ROLES = ['SUPER_ADMIN'];
+export const isTenantRole = (role) => !PLATFORM_ROLES.includes(role?.name || role);
+
 export const STATUS_COLORS = {
   // user / generic
   ACTIVE: 'green',

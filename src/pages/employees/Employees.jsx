@@ -6,7 +6,7 @@ import toast from 'react-hot-toast';
 import { LuUpload } from 'react-icons/lu';
 import { userService } from '@/services/userService';
 import { roleService } from '@/services/roleService';
-import { USER_STATUSES, PERMISSIONS, QUERY_KEYS } from '@/constants';
+import { USER_STATUSES, PERMISSIONS, QUERY_KEYS, isTenantRole } from '@/constants';
 import { fullName, formatDate, formatRelative } from '@/utils/formatters';
 import ResourcePage from '@/components/common/ResourcePage';
 import Avatar from '@/components/common/Avatar';
@@ -95,7 +95,9 @@ export default function Employees() {
     queryKey: [QUERY_KEYS.roles, 'options'],
     queryFn: () => roleService.list({ limit: 100 }),
   });
-  const roleOptions = (rolesQuery.data?.data || []).map((r) => ({ value: r.id, label: r.name }));
+  const roleOptions = (rolesQuery.data?.data || [])
+    .filter(isTenantRole)
+    .map((r) => ({ value: r.id, label: r.name }));
 
   const importMutation = useMutation({
     mutationFn: () => userService.importFile(importFile),
