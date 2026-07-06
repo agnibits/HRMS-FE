@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { onboardingService } from '@/services/modules';
 import { formatDate } from '@/utils/formatters';
+import { useUserLookup } from '@/hooks/useUserLookup';
 import ResourcePage from '@/components/common/ResourcePage';
 import { StatusChip } from '@/components/common/Badge';
 import { employeeField, userRefField } from '@/components/forms/refFields';
@@ -28,28 +29,30 @@ function ProgressBar({ value = 0 }) {
   );
 }
 
-const columns = [
-  {
-    accessorKey: 'employee',
-    header: 'New Hire',
-    cell: ({ row }) => (
-      <span className="font-medium text-surface-900 dark:text-surface-100">
-        {row.original.employeeName || row.original.employee}
-      </span>
-    ),
-  },
-  { accessorKey: 'startDate', header: 'Start Date', cell: ({ getValue }) => formatDate(getValue()) },
-  { accessorKey: 'buddy', header: 'Buddy', cell: ({ getValue }) => getValue() || '—' },
-  { accessorKey: 'manager', header: 'Manager', cell: ({ getValue }) => getValue() || '—' },
-  {
-    accessorKey: 'progress',
-    header: 'Checklist',
-    cell: ({ getValue }) => <ProgressBar value={getValue()} />,
-  },
-  { accessorKey: 'status', header: 'Status', cell: ({ getValue }) => <StatusChip status={getValue()} /> },
-];
-
 export default function Onboarding() {
+  const { nameOf } = useUserLookup();
+
+  const columns = [
+    {
+      accessorKey: 'employee',
+      header: 'New Hire',
+      cell: ({ row }) => (
+        <span className="font-medium text-surface-900 dark:text-surface-100">
+          {nameOf(row.original.employeeName || row.original.employeeId || row.original.employee)}
+        </span>
+      ),
+    },
+    { accessorKey: 'startDate', header: 'Start Date', cell: ({ getValue }) => formatDate(getValue()) },
+    { accessorKey: 'buddy', header: 'Buddy', cell: ({ row }) => nameOf(row.original.buddyName || row.original.buddy) },
+    { accessorKey: 'manager', header: 'Manager', cell: ({ row }) => nameOf(row.original.managerName || row.original.manager) },
+    {
+      accessorKey: 'progress',
+      header: 'Checklist',
+      cell: ({ getValue }) => <ProgressBar value={getValue()} />,
+    },
+    { accessorKey: 'status', header: 'Status', cell: ({ getValue }) => <StatusChip status={getValue()} /> },
+  ];
+
   return (
     <ResourcePage
       title="Onboarding"

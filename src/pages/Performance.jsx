@@ -4,6 +4,7 @@ import { formatDate } from '@/utils/formatters';
 import ResourcePage from '@/components/common/ResourcePage';
 import Badge, { StatusChip } from '@/components/common/Badge';
 import { employeeField, userRefField } from '@/components/forms/refFields';
+import { useUserLookup } from '@/hooks/useUserLookup';
 
 const STATUSES = ['DRAFT', 'IN_PROGRESS', 'COMPLETED'];
 const CYCLES = ['Q1', 'Q2', 'Q3', 'Q4', 'ANNUAL'];
@@ -23,24 +24,26 @@ function ScoreBadge({ score }) {
   return <Badge color={color}>{Number(score).toFixed(1)} / 5</Badge>;
 }
 
-const columns = [
-  {
-    accessorKey: 'employee',
-    header: 'Employee',
-    cell: ({ row }) => (
-      <span className="font-medium text-surface-900 dark:text-surface-100">
-        {row.original.employeeName || row.original.employee}
-      </span>
-    ),
-  },
-  { accessorKey: 'cycle', header: 'Cycle', cell: ({ getValue }) => <Badge color="purple">{getValue()}</Badge> },
-  { accessorKey: 'reviewer', header: 'Reviewer' },
-  { accessorKey: 'score', header: 'Score', cell: ({ getValue }) => <ScoreBadge score={getValue()} /> },
-  { accessorKey: 'status', header: 'Status', cell: ({ getValue }) => <StatusChip status={getValue()} /> },
-  { accessorKey: 'updatedAt', header: 'Updated', cell: ({ getValue }) => formatDate(getValue()) },
-];
-
 export default function Performance() {
+  const { nameOf } = useUserLookup();
+
+  const columns = [
+    {
+      accessorKey: 'employee',
+      header: 'Employee',
+      cell: ({ row }) => (
+        <span className="font-medium text-surface-900 dark:text-surface-100">
+          {nameOf(row.original.employeeName || row.original.employee)}
+        </span>
+      ),
+    },
+    { accessorKey: 'cycle', header: 'Cycle', cell: ({ getValue }) => <Badge color="purple">{getValue()}</Badge> },
+    { accessorKey: 'reviewer', header: 'Reviewer', cell: ({ row }) => nameOf(row.original.reviewerName || row.original.reviewer) },
+    { accessorKey: 'score', header: 'Score', cell: ({ getValue }) => <ScoreBadge score={getValue()} /> },
+    { accessorKey: 'status', header: 'Status', cell: ({ getValue }) => <StatusChip status={getValue()} /> },
+    { accessorKey: 'updatedAt', header: 'Updated', cell: ({ getValue }) => formatDate(getValue()) },
+  ];
+
   return (
     <ResourcePage
       title="Performance Management"

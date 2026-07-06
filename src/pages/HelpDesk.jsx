@@ -4,6 +4,7 @@ import { formatRelative } from '@/utils/formatters';
 import ResourcePage from '@/components/common/ResourcePage';
 import Badge, { StatusChip } from '@/components/common/Badge';
 import { userRefField } from '@/components/forms/refFields';
+import { useUserLookup } from '@/hooks/useUserLookup';
 
 const STATUSES = ['OPEN', 'IN_PROGRESS', 'ON_HOLD', 'CLOSED'];
 const PRIORITIES = ['LOW', 'MEDIUM', 'HIGH', 'URGENT'];
@@ -20,29 +21,38 @@ const schema = z.object({
   description: z.string().min(5, 'Describe the issue').max(2000),
 });
 
-const columns = [
-  {
-    accessorKey: 'subject',
-    header: 'Ticket',
-    cell: ({ row }) => (
-      <div>
-        <p className="font-medium text-surface-900 dark:text-surface-100">{row.original.subject}</p>
-        <p className="text-xs text-surface-400">{row.original.requesterName || row.original.requester}</p>
-      </div>
-    ),
-  },
-  { accessorKey: 'category', header: 'Category', cell: ({ getValue }) => <Badge color="teal">{getValue()}</Badge> },
-  {
-    accessorKey: 'priority',
-    header: 'Priority',
-    cell: ({ getValue }) => <Badge color={priorityColor[getValue()] || 'gray'} dot>{getValue()}</Badge>,
-  },
-  { accessorKey: 'assignee', header: 'Assignee', cell: ({ getValue }) => getValue() || <span className="text-surface-400">Unassigned</span> },
-  { accessorKey: 'status', header: 'Status', cell: ({ getValue }) => <StatusChip status={getValue()} /> },
-  { accessorKey: 'updatedAt', header: 'Updated', cell: ({ getValue }) => formatRelative(getValue()) },
-];
-
 export default function HelpDesk() {
+  const { nameOf } = useUserLookup();
+
+  const columns = [
+    {
+      accessorKey: 'subject',
+      header: 'Ticket',
+      cell: ({ row }) => (
+        <div>
+          <p className="font-medium text-surface-900 dark:text-surface-100">{row.original.subject}</p>
+          <p className="text-xs text-surface-400">{nameOf(row.original.requesterName || row.original.requester)}</p>
+        </div>
+      ),
+    },
+    { accessorKey: 'category', header: 'Category', cell: ({ getValue }) => <Badge color="teal">{getValue()}</Badge> },
+    {
+      accessorKey: 'priority',
+      header: 'Priority',
+      cell: ({ getValue }) => <Badge color={priorityColor[getValue()] || 'gray'} dot>{getValue()}</Badge>,
+    },
+    {
+      accessorKey: 'assignee',
+      header: 'Assignee',
+      cell: ({ row }) =>
+        row.original.assignee || row.original.assigneeName
+          ? nameOf(row.original.assigneeName || row.original.assignee)
+          : <span className="text-surface-400">Unassigned</span>,
+    },
+    { accessorKey: 'status', header: 'Status', cell: ({ getValue }) => <StatusChip status={getValue()} /> },
+    { accessorKey: 'updatedAt', header: 'Updated', cell: ({ getValue }) => formatRelative(getValue()) },
+  ];
+
   return (
     <ResourcePage
       title="Help Desk"
