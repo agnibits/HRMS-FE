@@ -65,8 +65,10 @@ export default function CompanySettings() {
   const dispatch = useDispatch();
 
   const mutation = useMutation({
-    mutationFn: (values) =>
-      existing ? companyService.update(existing.id, values) : companyService.create(values),
+    mutationFn: (values) => {
+      if (!existing?.id) throw new Error('Company profile is not available yet.');
+      return companyService.update(existing.id, values);
+    },
     onSuccess: () => toast.success('Company settings saved'),
     onError: (err) =>
       toast.error(
