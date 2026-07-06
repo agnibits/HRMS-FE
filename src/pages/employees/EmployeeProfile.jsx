@@ -22,6 +22,7 @@ import { PageLoader } from '@/components/common/Spinner';
 import ErrorState from '@/components/common/ErrorState';
 import EmptyState from '@/components/common/EmptyState';
 import ConfirmDialog from '@/components/modals/ConfirmDialog';
+import LeaveBalanceCard from '@/components/leave/LeaveBalanceCard';
 import { useDisclosure } from '@/hooks/useDisclosure';
 
 function InfoRow({ icon: Icon, label, value }) {
@@ -144,6 +145,7 @@ export default function EmployeeProfile() {
           <Tabs
             tabs={[
               { key: 'overview', label: 'Overview' },
+              { key: 'leave', label: 'Leave Balance' },
               ...(hasPermission(PERMISSIONS.USER_UPDATE) ? [{ key: 'roles', label: 'Roles & Access' }] : []),
               ...(hasPermission(PERMISSIONS.AUDIT_READ) ? [{ key: 'activity', label: 'Activity' }] : []),
             ]}
@@ -171,6 +173,8 @@ export default function EmployeeProfile() {
                     </CardBody>
                   </Card>
                 )}
+
+                {active === 'leave' && <LeaveBalanceCard employeeId={id} />}
 
                 {active === 'roles' && (
                   <Card>

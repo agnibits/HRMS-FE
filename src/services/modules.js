@@ -1,3 +1,4 @@
+import { request } from '@/api/client';
 import { createResourceService } from './resourceService';
 
 /**
@@ -8,7 +9,11 @@ import { createResourceService } from './resourceService';
 export const departmentService = createResourceService('departments');
 export const designationService = createResourceService('designations');
 export const attendanceService = createResourceService('attendance');
-export const leaveService = createResourceService('leaves');
+export const leaveService = {
+  ...createResourceService('leaves'),
+  /** Per-leave-type balance for an employee: [{ type, allocated, used, pending, remaining, available }]. */
+  balance: (employee) => request({ method: 'GET', url: '/leaves/balance', params: { employee } }),
+};
 export const leaveTypeService = createResourceService('leave-types');
 export const holidayService = createResourceService('holidays');
 export const payrollService = createResourceService('payroll');
