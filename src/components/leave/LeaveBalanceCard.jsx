@@ -36,8 +36,8 @@ export function LeaveBalanceCard({ employeeId, title = 'Leave balance', descript
         ) : rows.length === 0 ? (
           <EmptyState
             icon={LuTreePalm}
-            title="No balances yet"
-            description="Leave balances appear once the company's leave policy and this employee's leaves are set up."
+            title="No leave policy assigned"
+            description="This employee has no leave types allocated yet. Define your company's leave policy under Leave → Leave Policy, and balances will appear here automatically."
             className="py-6"
           />
         ) : (

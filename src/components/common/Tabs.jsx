@@ -19,7 +19,7 @@ export function Tabs({ tabs, value, onChange, defaultTab, className, children })
     <div className={className}>
       <div
         role="tablist"
-        className="flex gap-1 overflow-x-auto border-b border-surface-200 dark:border-surface-800"
+        className="flex gap-1 overflow-x-auto border-b border-surface-200 [scrollbar-width:none] dark:border-surface-800 [&::-webkit-scrollbar]:hidden"
       >
         {tabs.map((t) => {
           const isActive = t.key === active;

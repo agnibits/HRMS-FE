@@ -1,41 +1,60 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
 import toast from 'react-hot-toast';
 import {
-  LuMail, LuPhone, LuCalendarDays, LuShieldCheck, LuClock, LuTrash2, LuRotateCcw, LuCircleCheck, LuCircleX,
+  LuMail, LuPhone, LuCalendarDays, LuShieldCheck, LuClock, LuCircleCheck, LuCircleX,
+  LuEllipsisVertical, LuPencilLine, LuIdCard, LuBuilding2, LuBriefcaseBusiness,
+  LuUserRound, LuUserRoundX, LuBadgeCheck, LuTreePalm,
 } from 'react-icons/lu';
 import { userService } from '@/services/userService';
 import { roleService } from '@/services/roleService';
 import { auditService } from '@/services/auditService';
 import { useAuth } from '@/hooks/useAuth';
-import { QUERY_KEYS, PERMISSIONS, isTenantRole } from '@/constants';
-import { fullName, formatDate, formatDateTime, formatRelative, titleCase } from '@/utils/formatters';
+import { QUERY_KEYS, PERMISSIONS, USER_STATUSES, isTenantRole } from '@/constants';
+import { fullName, formatDate, formatDateTime, formatRelative, titleCase, truncate } from '@/utils/formatters';
 import PageHeader from '@/components/layout/PageHeader';
 import { Card, CardHeader, CardBody } from '@/components/cards/Card';
 import Avatar from '@/components/common/Avatar';
 import Badge, { StatusChip } from '@/components/common/Badge';
-import Button from '@/components/common/Button';
+import Button, { IconButton } from '@/components/common/Button';
+import Dropdown from '@/components/common/Dropdown';
 import Tabs from '@/components/common/Tabs';
 import Timeline from '@/components/common/Timeline';
 import { PageLoader } from '@/components/common/Spinner';
 import ErrorState from '@/components/common/ErrorState';
 import EmptyState from '@/components/common/EmptyState';
+import Modal from '@/components/modals/Modal';
 import ConfirmDialog from '@/components/modals/ConfirmDialog';
+import FormShell from '@/components/forms/FormShell';
+import { FormInput, FormNativeSelect } from '@/components/forms/fields';
 import LeaveBalanceCard from '@/components/leave/LeaveBalanceCard';
 import { useDisclosure } from '@/hooks/useDisclosure';
 
-function InfoRow({ icon: Icon, label, value }) {
+function InfoRow({ icon: Icon, label, value, title }) {
   return (
     <div className="flex items-start gap-3">
       <Icon className="mt-0.5 size-4 shrink-0 text-surface-400" />
       <div className="min-w-0">
         <p className="text-xs text-surface-400">{label}</p>
-        <p className="truncate text-sm font-medium text-surface-800 dark:text-surface-200">{value || '—'}</p>
+        <p className="truncate text-sm font-medium text-surface-800 dark:text-surface-200" title={title}>
+          {value || <span className="text-surface-400">—</span>}
+        </p>
       </div>
     </div>
   );
 }
+
+const editSchema = z.object({
+  firstName: z.string().min(1, 'First name is required').max(60),
+  lastName: z.string().min(1, 'Last name is required').max(60),
+  email: z.string().min(1, 'Email is required').email('Enter a valid email'),
+  phone: z.string().optional().or(z.literal('')),
+  status: z.enum(USER_STATUSES),
+});
 
 export default function EmployeeProfile() {
   const { id } = useParams();
@@ -43,6 +62,7 @@ export default function EmployeeProfile() {
   const queryClient = useQueryClient();
   const { hasPermission } = useAuth();
   const deleteModal = useDisclosure();
+  const editModal = useDisclosure();
   const [pendingRoles, setPendingRoles] = useState(null);
 
   const userQuery = useQuery({
@@ -61,11 +81,27 @@ export default function EmployeeProfile() {
     enabled: hasPermission(PERMISSIONS.AUDIT_READ),
   });
 
+  const form = useForm({ resolver: zodResolver(editSchema) });
+
   const rolesMutation = useMutation({
     mutationFn: (roleIds) => userService.setRoles(id, roleIds),
     onSuccess: () => {
       toast.success('Roles updated');
       setPendingRoles(null);
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.users] });
+    },
+    onError: (err) => toast.error(err.message),
+  });
+
+  const editMutation = useMutation({
+    mutationFn: (values) => {
+      const payload = { ...values };
+      if (!payload.phone) delete payload.phone;
+      return userService.update(id, payload);
+    },
+    onSuccess: () => {
+      toast.success('Employee updated');
+      editModal.close();
       queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.users] });
     },
     onError: (err) => toast.error(err.message),
@@ -86,6 +122,19 @@ export default function EmployeeProfile() {
   const user = userQuery.data?.data;
   const allRoles = (rolesQuery.data?.data || []).filter(isTenantRole);
   const assignedIds = new Set((pendingRoles ?? (user.roles || []).map((r) => r.id)));
+  const canUpdate = hasPermission(PERMISSIONS.USER_UPDATE);
+  const canDelete = hasPermission(PERMISSIONS.USER_DELETE);
+
+  const openEdit = () => {
+    form.reset({
+      firstName: user.firstName || '',
+      lastName: user.lastName || '',
+      email: user.email || '',
+      phone: user.phone || '',
+      status: user.status || 'ACTIVE',
+    });
+    editModal.open();
+  };
 
   const toggleRole = (roleId) => {
     const next = new Set(assignedIds);
@@ -110,21 +159,41 @@ export default function EmployeeProfile() {
           { label: fullName(user), to: `/employees/${id}` },
         ]}
         actions={
-          hasPermission(PERMISSIONS.USER_DELETE) && (
-            <Button variant="danger" leftIcon={LuTrash2} onClick={() => deleteModal.open()}>
-              Deactivate
-            </Button>
-          )
+          <>
+            {canUpdate && (
+              <Button variant="secondary" leftIcon={LuPencilLine} onClick={openEdit}>
+                Edit
+              </Button>
+            )}
+            {canDelete && (
+              <Dropdown
+                align="right"
+                width="w-56"
+                trigger={<IconButton icon={LuEllipsisVertical} label="More actions" variant="secondary" />}
+                items={[
+                  {
+                    key: 'deactivate',
+                    label: 'Deactivate employee',
+                    icon: LuUserRoundX,
+                    danger: true,
+                    onClick: () => deleteModal.open(),
+                  },
+                ]}
+              />
+            )}
+          </>
         }
       />
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        {/* Identity card */}
+        {/* Identity card — at-a-glance summary */}
         <Card className="h-fit">
           <CardBody className="flex flex-col items-center text-center">
             <Avatar name={user} src={user.avatarUrl} size="xl" />
             <h2 className="mt-3 text-lg font-bold text-surface-900 dark:text-surface-50">{fullName(user)}</h2>
-            <p className="text-sm text-surface-500 dark:text-surface-400">{user.email}</p>
+            <p className="text-sm text-surface-500 dark:text-surface-400">
+              {user.designation || user.jobTitle || user.email}
+            </p>
             <div className="mt-3 flex flex-wrap justify-center gap-1.5">
               <StatusChip status={user.status} />
               {(user.roles || []).map((r) => (
@@ -134,44 +203,62 @@ export default function EmployeeProfile() {
             <div className="mt-6 w-full space-y-4 border-t border-surface-100 pt-5 text-left dark:border-surface-800">
               <InfoRow icon={LuMail} label="Email" value={user.email} />
               <InfoRow icon={LuPhone} label="Phone" value={user.phone} />
-              <InfoRow icon={LuCalendarDays} label="Joined" value={formatDate(user.createdAt)} />
-              <InfoRow icon={LuClock} label="Last active" value={formatRelative(user.lastLoginAt)} />
+              <InfoRow icon={LuCalendarDays} label="Joined" value={formatDate(user.joiningDate || user.createdAt)} />
+              {/* Single sign-in metric — relative here, exact on hover */}
+              <InfoRow
+                icon={LuClock}
+                label="Last sign-in"
+                value={user.lastLoginAt ? formatRelative(user.lastLoginAt) : 'Never signed in'}
+                title={user.lastLoginAt ? formatDateTime(user.lastLoginAt) : undefined}
+              />
             </div>
           </CardBody>
         </Card>
 
         {/* Detail tabs */}
-        <div className="lg:col-span-2">
+        <div className="min-w-0 lg:col-span-2">
           <Tabs
             tabs={[
               { key: 'overview', label: 'Overview' },
               { key: 'leave', label: 'Leave Balance' },
-              ...(hasPermission(PERMISSIONS.USER_UPDATE) ? [{ key: 'roles', label: 'Roles & Access' }] : []),
+              ...(canUpdate ? [{ key: 'roles', label: 'Roles & Access' }] : []),
               ...(hasPermission(PERMISSIONS.AUDIT_READ) ? [{ key: 'activity', label: 'Activity' }] : []),
             ]}
           >
             {(active) => (
               <>
                 {active === 'overview' && (
-                  <Card>
-                    <CardHeader title="Account details" />
-                    <CardBody className="grid grid-cols-1 gap-x-8 gap-y-5 sm:grid-cols-2">
-                      <InfoRow icon={LuShieldCheck} label="Account status" value={titleCase(user.status)} />
-                      <InfoRow
-                        icon={user.mfaEnabled ? LuCircleCheck : LuCircleX}
-                        label="Two-factor authentication"
-                        value={user.mfaEnabled ? 'Enabled' : 'Not enabled'}
-                      />
-                      <InfoRow
-                        icon={user.emailVerifiedAt ? LuCircleCheck : LuCircleX}
-                        label="Email verified"
-                        value={user.emailVerifiedAt ? formatDateTime(user.emailVerifiedAt) : 'Not verified'}
-                      />
-                      <InfoRow icon={LuClock} label="Last sign-in" value={formatDateTime(user.lastLoginAt)} />
-                      <InfoRow icon={LuCalendarDays} label="Created" value={formatDateTime(user.createdAt)} />
-                      <InfoRow icon={LuCalendarDays} label="Last updated" value={formatDateTime(user.updatedAt)} />
-                    </CardBody>
-                  </Card>
+                  <div className="space-y-6">
+                    <Card>
+                      <CardHeader title="Employment" description="Role and reporting details for this employee." />
+                      <CardBody className="grid grid-cols-1 gap-x-8 gap-y-5 sm:grid-cols-2">
+                        <InfoRow icon={LuIdCard} label="Employee ID" value={user.employeeId || truncate(user.id, 14)} title={user.id} />
+                        <InfoRow icon={LuBuilding2} label="Department" value={user.department || user.departmentName} />
+                        <InfoRow icon={LuBriefcaseBusiness} label="Designation" value={user.designation || user.jobTitle} />
+                        <InfoRow icon={LuUserRound} label="Reports to" value={user.managerName || user.manager} />
+                        <InfoRow icon={LuCalendarDays} label="Joining date" value={user.joiningDate ? formatDate(user.joiningDate) : null} />
+                        <InfoRow icon={LuBadgeCheck} label="Employment type" value={user.employmentType ? titleCase(user.employmentType) : null} />
+                      </CardBody>
+                    </Card>
+
+                    <Card>
+                      <CardHeader title="Account & security" description="Authentication and account lifecycle." />
+                      <CardBody className="grid grid-cols-1 gap-x-8 gap-y-5 sm:grid-cols-2">
+                        <InfoRow
+                          icon={user.mfaEnabled ? LuCircleCheck : LuCircleX}
+                          label="Two-factor authentication"
+                          value={user.mfaEnabled ? 'Enabled' : 'Not enabled'}
+                        />
+                        <InfoRow
+                          icon={user.emailVerifiedAt ? LuCircleCheck : LuCircleX}
+                          label="Email verified"
+                          value={user.emailVerifiedAt ? formatDateTime(user.emailVerifiedAt) : 'Not verified'}
+                        />
+                        <InfoRow icon={LuShieldCheck} label="Created" value={formatDateTime(user.createdAt)} />
+                        <InfoRow icon={LuClock} label="Last updated" value={formatDateTime(user.updatedAt)} />
+                      </CardBody>
+                    </Card>
+                  </div>
                 )}
 
                 {active === 'leave' && <LeaveBalanceCard employeeId={id} />}
@@ -193,28 +280,41 @@ export default function EmployeeProfile() {
                       }
                     />
                     <CardBody className="space-y-2.5">
-                      {allRoles.map((role) => (
-                        <label
-                          key={role.id}
-                          className="flex cursor-pointer items-start gap-3 rounded-lg border border-surface-200 p-3.5 transition-colors hover:border-primary-300 dark:border-surface-700 dark:hover:border-primary-700"
-                        >
-                          <input
-                            type="checkbox"
-                            className="mt-0.5 size-4 accent-primary-600"
-                            checked={assignedIds.has(role.id)}
-                            onChange={() => toggleRole(role.id)}
-                          />
-                          <span>
-                            <span className="flex items-center gap-2 text-sm font-medium text-surface-900 dark:text-surface-100">
-                              {role.name}
-                              {role.isSystem && <Badge>System</Badge>}
+                      {allRoles.map((role) => {
+                        const perms = role.permissions || [];
+                        const isOn = assignedIds.has(role.id);
+                        return (
+                          <label
+                            key={role.id}
+                            className="flex cursor-pointer items-start gap-3 rounded-lg border border-surface-200 p-3.5 transition-colors hover:border-primary-300 dark:border-surface-700 dark:hover:border-primary-700"
+                          >
+                            <input
+                              type="checkbox"
+                              className="mt-0.5 size-4 accent-primary-600"
+                              checked={isOn}
+                              onChange={() => toggleRole(role.id)}
+                            />
+                            <span className="min-w-0 grow">
+                              <span className="flex items-center gap-2 text-sm font-medium text-surface-900 dark:text-surface-100">
+                                {role.name}
+                                {role.isSystem && <Badge>System</Badge>}
+                              </span>
+                              {role.description && (
+                                <span className="mt-0.5 block text-xs text-surface-400">{role.description}</span>
+                              )}
+                              {/* What this role actually grants */}
+                              {perms.length > 0 && (
+                                <span className="mt-2 flex flex-wrap gap-1">
+                                  {perms.slice(0, 6).map((p) => (
+                                    <Badge key={p} color="primary" className="font-mono text-[10px]">{p}</Badge>
+                                  ))}
+                                  {perms.length > 6 && <Badge className="text-[10px]">+{perms.length - 6} more</Badge>}
+                                </span>
+                              )}
                             </span>
-                            {role.description && (
-                              <span className="mt-0.5 block text-xs text-surface-400">{role.description}</span>
-                            )}
-                          </span>
-                        </label>
-                      ))}
+                          </label>
+                        );
+                      })}
                     </CardBody>
                   </Card>
                 )}
@@ -226,7 +326,11 @@ export default function EmployeeProfile() {
                       {activityItems.length ? (
                         <Timeline items={activityItems} />
                       ) : (
-                        <EmptyState title="No recorded activity" className="py-4" />
+                        <EmptyState
+                          title="No recorded activity"
+                          description="Account changes and sign-in events for this employee will appear here."
+                          className="py-4"
+                        />
                       )}
                     </CardBody>
                   </Card>
@@ -236,6 +340,31 @@ export default function EmployeeProfile() {
           </Tabs>
         </div>
       </div>
+
+      {/* Edit employee */}
+      <Modal isOpen={editModal.isOpen} onClose={editModal.close} title="Edit employee" size="md">
+        <FormShell
+          form={form}
+          onSubmit={(v) => editMutation.mutate(v)}
+          onCancel={editModal.close}
+          loading={editMutation.isPending}
+          apiError={editMutation.error}
+          submitLabel="Save changes"
+        >
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <FormInput form={form} name="firstName" label="First name" required />
+            <FormInput form={form} name="lastName" label="Last name" required />
+            <FormInput form={form} name="email" label="Email address" type="email" required className="sm:col-span-2" />
+            <FormInput form={form} name="phone" label="Phone" placeholder="+1 555 000 0000" />
+            <FormNativeSelect
+              form={form}
+              name="status"
+              label="Status"
+              options={USER_STATUSES.map((s) => ({ value: s, label: titleCase(s) }))}
+            />
+          </div>
+        </FormShell>
+      </Modal>
 
       <ConfirmDialog
         isOpen={deleteModal.isOpen}
