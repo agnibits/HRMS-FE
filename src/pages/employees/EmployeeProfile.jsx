@@ -7,8 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import toast from 'react-hot-toast';
 import {
   LuMail, LuPhone, LuCalendarDays, LuShieldCheck, LuClock, LuCircleCheck, LuCircleX,
-  LuEllipsisVertical, LuPencilLine, LuIdCard, LuBuilding2, LuBriefcaseBusiness,
-  LuUserRound, LuUserRoundX, LuBadgeCheck, LuTreePalm,
+  LuEllipsisVertical, LuPencilLine, LuIdCard, LuUserRoundX,
 } from 'react-icons/lu';
 import { userService } from '@/services/userService';
 import { roleService } from '@/services/roleService';
@@ -191,9 +190,7 @@ export default function EmployeeProfile() {
           <CardBody className="flex flex-col items-center text-center">
             <Avatar name={user} src={user.avatarUrl} size="xl" />
             <h2 className="mt-3 text-lg font-bold text-surface-900 dark:text-surface-50">{fullName(user)}</h2>
-            <p className="text-sm text-surface-500 dark:text-surface-400">
-              {user.designation || user.jobTitle || user.email}
-            </p>
+            <p className="text-sm text-surface-500 dark:text-surface-400">{user.email}</p>
             <div className="mt-3 flex flex-wrap justify-center gap-1.5">
               <StatusChip status={user.status} />
               {(user.roles || []).map((r) => (
@@ -203,7 +200,7 @@ export default function EmployeeProfile() {
             <div className="mt-6 w-full space-y-4 border-t border-surface-100 pt-5 text-left dark:border-surface-800">
               <InfoRow icon={LuMail} label="Email" value={user.email} />
               <InfoRow icon={LuPhone} label="Phone" value={user.phone} />
-              <InfoRow icon={LuCalendarDays} label="Joined" value={formatDate(user.joiningDate || user.createdAt)} />
+              <InfoRow icon={LuCalendarDays} label="Joined" value={formatDate(user.createdAt)} />
               {/* Single sign-in metric — relative here, exact on hover */}
               <InfoRow
                 icon={LuClock}
@@ -228,37 +225,24 @@ export default function EmployeeProfile() {
             {(active) => (
               <>
                 {active === 'overview' && (
-                  <div className="space-y-6">
-                    <Card>
-                      <CardHeader title="Employment" description="Role and reporting details for this employee." />
-                      <CardBody className="grid grid-cols-1 gap-x-8 gap-y-5 sm:grid-cols-2">
-                        <InfoRow icon={LuIdCard} label="Employee ID" value={user.employeeId || truncate(user.id, 14)} title={user.id} />
-                        <InfoRow icon={LuBuilding2} label="Department" value={user.department || user.departmentName} />
-                        <InfoRow icon={LuBriefcaseBusiness} label="Designation" value={user.designation || user.jobTitle} />
-                        <InfoRow icon={LuUserRound} label="Reports to" value={user.managerName || user.manager} />
-                        <InfoRow icon={LuCalendarDays} label="Joining date" value={user.joiningDate ? formatDate(user.joiningDate) : null} />
-                        <InfoRow icon={LuBadgeCheck} label="Employment type" value={user.employmentType ? titleCase(user.employmentType) : null} />
-                      </CardBody>
-                    </Card>
-
-                    <Card>
-                      <CardHeader title="Account & security" description="Authentication and account lifecycle." />
-                      <CardBody className="grid grid-cols-1 gap-x-8 gap-y-5 sm:grid-cols-2">
-                        <InfoRow
-                          icon={user.mfaEnabled ? LuCircleCheck : LuCircleX}
-                          label="Two-factor authentication"
-                          value={user.mfaEnabled ? 'Enabled' : 'Not enabled'}
-                        />
-                        <InfoRow
-                          icon={user.emailVerifiedAt ? LuCircleCheck : LuCircleX}
-                          label="Email verified"
-                          value={user.emailVerifiedAt ? formatDateTime(user.emailVerifiedAt) : 'Not verified'}
-                        />
-                        <InfoRow icon={LuShieldCheck} label="Created" value={formatDateTime(user.createdAt)} />
-                        <InfoRow icon={LuClock} label="Last updated" value={formatDateTime(user.updatedAt)} />
-                      </CardBody>
-                    </Card>
-                  </div>
+                  <Card>
+                    <CardHeader title="Account details" description="Identity, authentication and account lifecycle." />
+                    <CardBody className="grid grid-cols-1 gap-x-8 gap-y-5 sm:grid-cols-2">
+                      <InfoRow icon={LuIdCard} label="Employee ID" value={truncate(user.id, 14)} title={user.id} />
+                      <InfoRow
+                        icon={user.mfaEnabled ? LuCircleCheck : LuCircleX}
+                        label="Two-factor authentication"
+                        value={user.mfaEnabled ? 'Enabled' : 'Not enabled'}
+                      />
+                      <InfoRow
+                        icon={user.emailVerifiedAt ? LuCircleCheck : LuCircleX}
+                        label="Email verified"
+                        value={user.emailVerifiedAt ? formatDateTime(user.emailVerifiedAt) : 'Not verified'}
+                      />
+                      <InfoRow icon={LuShieldCheck} label="Created" value={formatDateTime(user.createdAt)} />
+                      <InfoRow icon={LuClock} label="Last updated" value={formatDateTime(user.updatedAt)} />
+                    </CardBody>
+                  </Card>
                 )}
 
                 {active === 'leave' && <LeaveBalanceCard employeeId={id} />}
