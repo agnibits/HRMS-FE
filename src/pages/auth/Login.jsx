@@ -5,7 +5,7 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
-import { LuArrowLeft, LuShieldCheck } from 'react-icons/lu';
+import { LuArrowLeft, LuShieldCheck, LuShieldAlert } from 'react-icons/lu';
 import { authService } from '@/services/authService';
 import { useAuth } from '@/hooks/useAuth';
 import { FormInput, FormPassword, Input } from '@/components/forms/fields';
@@ -22,6 +22,7 @@ export default function Login() {
   const { applyLogin } = useAuth();
   const [mfa, setMfa] = useState(null); // { mfaToken }
   const [code, setCode] = useState('');
+  const [wrongPortal, setWrongPortal] = useState(false);
   const from = location.state?.from?.pathname || '/';
 
   const form = useForm({
@@ -38,10 +39,18 @@ export default function Login() {
   const loginMutation = useMutation({
     mutationFn: authService.login,
     onSuccess: (data) => {
+      setWrongPortal(false);
       if (data?.mfaRequired) setMfa({ mfaToken: data.mfaToken });
       else finishLogin(data);
     },
-    onError: (err) => toast.error(err.message),
+    onError: (err) => {
+      // Platform (SUPER_ADMIN) accounts must use the Agnibits console, not the HRMS product.
+      if (err.code === 'USE_PLATFORM_PORTAL') setWrongPortal(true);
+      else {
+        setWrongPortal(false);
+        toast.error(err.message);
+      }
+    },
   });
 
   const mfaMutation = useMutation({
@@ -102,6 +111,21 @@ export default function Login() {
           Welcome back — enter your credentials to continue.
         </p>
       </div>
+
+      {wrongPortal && (
+        <div
+          role="alert"
+          className="mb-5 flex items-start gap-3 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm dark:border-amber-900 dark:bg-amber-950/50"
+        >
+          <LuShieldAlert className="mt-0.5 size-5 shrink-0 text-amber-600 dark:text-amber-400" />
+          <div>
+            <p className="font-medium text-amber-800 dark:text-amber-200">This is the HRMS workspace</p>
+            <p className="mt-0.5 text-amber-700 dark:text-amber-300">
+              Platform administrators must sign in from the Agnibits console, not here.
+            </p>
+          </div>
+        </div>
+      )}
 
       <form onSubmit={form.handleSubmit((v) => loginMutation.mutate(v))} noValidate className="space-y-4">
         <FormInput
