@@ -131,7 +131,7 @@ export default function Employees() {
     { name: 'email', label: 'Email address', type: 'email', required: true },
     { name: 'phone', label: 'Phone', placeholder: '+1 555 000 0000' },
     // Employment
-    departmentField(),
+    departmentField({ hint: 'Adds this employee as a member of the department.' }),
     designationField(),
     managerField(),
     { name: 'joiningDate', label: 'Joining date', type: 'date' },

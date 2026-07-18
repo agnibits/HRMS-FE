@@ -63,7 +63,7 @@ export default function Departments() {
       fields={[
         { name: 'name', label: 'Department name', required: true, placeholder: 'e.g. Engineering' },
         { name: 'code', label: 'Code', required: true, placeholder: 'ENG' },
-        userRefField('headId', 'Department head', { hint: 'Optional — assign an employee once they exist.' }),
+        userRefField('headId', 'Department head', { hint: 'Optional. The head automatically becomes a member of this department too.' }),
         { name: 'status', label: 'Status', type: 'select', native: true, options: [
           { value: 'ACTIVE', label: 'Active' }, { value: 'INACTIVE', label: 'Inactive' },
         ] },
