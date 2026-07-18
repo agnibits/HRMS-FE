@@ -13,6 +13,12 @@ export const leaveService = {
   ...createResourceService('leaves'),
   /** Per-leave-type balance for an employee: [{ type, allocated, used, pending, remaining, available }]. */
   balance: (employee) => request({ method: 'GET', url: '/leaves/balance', params: { employee } }),
+  /** Manager's approval queue — leaves from their direct reports awaiting a decision. */
+  approvalQueue: (params = {}) =>
+    request({ method: 'GET', url: '/leaves', params: { pendingApproval: 'me', ...params } }),
+  approve: (id) => request({ method: 'POST', url: `/leaves/${id}/approve` }),
+  reject: (id, reason) => request({ method: 'POST', url: `/leaves/${id}/reject`, data: { reason } }),
+  cancel: (id) => request({ method: 'POST', url: `/leaves/${id}/cancel` }),
 };
 export const leaveTypeService = createResourceService('leave-types');
 export const holidayService = createResourceService('holidays');

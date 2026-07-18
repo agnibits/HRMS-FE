@@ -1,14 +1,19 @@
 import { z } from 'zod';
 import dayjs from 'dayjs';
-import { LuCalendarDays, LuSlidersHorizontal } from 'react-icons/lu';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import toast from 'react-hot-toast';
+import { LuCalendarDays, LuSlidersHorizontal, LuCheckCheck, LuBan } from 'react-icons/lu';
 import { leaveService, leaveTypeService } from '@/services/modules';
 import { useAuth } from '@/hooks/useAuth';
 import { useLeaveTypes } from '@/hooks/useLeaveTypes';
+import { useUserLookup } from '@/hooks/useUserLookup';
 import { formatDate } from '@/utils/formatters';
+import { employeeField } from '@/components/forms/refFields';
 import PageHeader from '@/components/layout/PageHeader';
 import Tabs from '@/components/common/Tabs';
 import ResourcePage from '@/components/common/ResourcePage';
 import Badge, { StatusChip } from '@/components/common/Badge';
+import LeaveApprovals from '@/components/leave/LeaveApprovals';
 
 const STATUSES = ['PENDING', 'APPROVED', 'REJECTED', 'CANCELLED'];
 
@@ -26,6 +31,17 @@ function TypeChip({ color, children }) {
 
 function LeaveRequests() {
   const { options: typeOptions, codes, colorByCode } = useLeaveTypes();
+  const { nameOf } = useUserLookup();
+  const queryClient = useQueryClient();
+
+  const cancel = useMutation({
+    mutationFn: (leave) => leaveService.cancel(leave.id),
+    onSuccess: () => {
+      toast.success('Leave cancelled — balance restored');
+      queryClient.invalidateQueries({ queryKey: ['leaves'] });
+    },
+    onError: (err) => toast.error(err.message),
+  });
 
   const schema = z
     .object({
@@ -34,7 +50,6 @@ function LeaveRequests() {
       startDate: z.string().min(1, 'Start date is required'),
       endDate: z.string().min(1, 'End date is required'),
       reason: z.string().min(5, 'Please provide a short reason').max(400),
-      status: z.enum(STATUSES),
     })
     .refine((d) => !dayjs(d.endDate).isBefore(dayjs(d.startDate)), {
       path: ['endDate'],
@@ -47,7 +62,7 @@ function LeaveRequests() {
       header: 'Employee',
       cell: ({ row }) => (
         <span className="font-medium text-surface-900 dark:text-surface-100">
-          {row.original.employeeName || row.original.employee}
+          {row.original.employeeName || nameOf(row.original.employee || row.original.employeeId)}
         </span>
       ),
     },
@@ -84,13 +99,12 @@ function LeaveRequests() {
       queryKey="leaves"
       columns={columns}
       schema={schema}
-      defaults={{ employee: '', type: typeOptions[0]?.value || '', startDate: '', endDate: '', reason: '', status: 'PENDING' }}
+      defaults={{ employee: '', type: typeOptions[0]?.value || '', startDate: '', endDate: '', reason: '' }}
       fields={[
-        { name: 'employee', label: 'Employee', required: true, placeholder: 'Employee email or ID' },
+        employeeField(),
         { name: 'type', label: 'Leave type', type: 'select', native: true, options: typeOptions },
         { name: 'startDate', label: 'Start date', type: 'date', required: true },
         { name: 'endDate', label: 'End date', type: 'date', required: true },
-        { name: 'status', label: 'Status', type: 'select', native: true, options: STATUSES.map((s) => ({ value: s, label: s })) },
         { name: 'reason', label: 'Reason', type: 'textarea', required: true, colSpan: 2 },
       ]}
       filters={[
@@ -98,6 +112,12 @@ function LeaveRequests() {
         { key: 'type', label: 'Type', options: codes },
       ]}
       createLabel="Request Leave"
+      disableEdit
+      extraRowActions={(row) =>
+        ['PENDING', 'APPROVED'].includes(row.status)
+          ? [{ icon: LuBan, label: 'Cancel leave', onClick: () => cancel.mutate(row) }]
+          : []
+      }
     />
   );
 }
@@ -188,6 +208,7 @@ export default function Leave() {
 
   const tabs = [
     { key: 'requests', label: 'Requests', icon: LuCalendarDays },
+    { key: 'approvals', label: 'Approvals', icon: LuCheckCheck },
     ...(canManagePolicy ? [{ key: 'policy', label: 'Leave Policy', icon: LuSlidersHorizontal }] : []),
   ];
 
@@ -195,10 +216,14 @@ export default function Leave() {
     <div>
       <PageHeader
         title="Leave Management"
-        description="Requests, approvals and your company's leave policy."
+        description="Apply for leave, approve your team's requests, and manage your company's policy."
       />
       <Tabs tabs={tabs}>
-        {(active) => (active === 'policy' ? <LeavePolicy /> : <LeaveRequests />)}
+        {(active) =>
+          active === 'policy' ? <LeavePolicy />
+          : active === 'approvals' ? <LeaveApprovals />
+          : <LeaveRequests />
+        }
       </Tabs>
     </div>
   );
