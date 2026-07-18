@@ -5,7 +5,7 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
-import { LuArrowLeft, LuShieldCheck, LuShieldAlert } from 'react-icons/lu';
+import { LuArrowLeft, LuShieldCheck, LuShieldAlert, LuBuilding2, LuChevronRight } from 'react-icons/lu';
 import { authService } from '@/services/authService';
 import { useAuth } from '@/hooks/useAuth';
 import { FormInput, FormPassword, Input } from '@/components/forms/fields';
@@ -23,6 +23,7 @@ export default function Login() {
   const [mfa, setMfa] = useState(null); // { mfaToken }
   const [code, setCode] = useState('');
   const [wrongPortal, setWrongPortal] = useState(false);
+  const [companyChoice, setCompanyChoice] = useState(null); // { companies, creds }
   const from = location.state?.from?.pathname || '/';
 
   const form = useForm({
@@ -38,8 +39,14 @@ export default function Login() {
 
   const loginMutation = useMutation({
     mutationFn: authService.login,
-    onSuccess: (data) => {
+    onSuccess: (data, variables) => {
       setWrongPortal(false);
+      // Same email+password in >1 company — let the user pick, then retry with companyId.
+      if (data?.multipleCompanies) {
+        setCompanyChoice({ companies: data.companies || [], creds: variables });
+        return;
+      }
+      setCompanyChoice(null);
       if (data?.mfaRequired) setMfa({ mfaToken: data.mfaToken });
       else finishLogin(data);
     },
@@ -58,6 +65,42 @@ export default function Login() {
     onSuccess: finishLogin,
     onError: (err) => toast.error(err.message),
   });
+
+  if (companyChoice) {
+    return (
+      <div className="card p-8">
+        <div className="mb-6">
+          <h1 className="text-xl font-bold text-surface-900 dark:text-surface-50">Choose your organization</h1>
+          <p className="mt-1 text-sm text-surface-500 dark:text-surface-400">
+            Your account exists in more than one company. Pick the one you want to sign in to.
+          </p>
+        </div>
+        <div className="space-y-2">
+          {companyChoice.companies.map((c) => (
+            <button
+              key={c.id}
+              disabled={loginMutation.isPending}
+              onClick={() => loginMutation.mutate({ ...companyChoice.creds, companyId: c.id })}
+              className="flex w-full items-center gap-3 rounded-xl border border-surface-200 p-4 text-left transition-colors hover:border-primary-300 hover:bg-primary-50/50 disabled:opacity-60 dark:border-surface-700 dark:hover:border-primary-700 dark:hover:bg-primary-950/30"
+            >
+              <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary-50 text-primary-600 dark:bg-primary-950 dark:text-primary-400">
+                <LuBuilding2 className="size-5" />
+              </span>
+              <span className="grow font-medium text-surface-900 dark:text-surface-100">{c.name}</span>
+              <LuChevronRight className="size-4 text-surface-400" />
+            </button>
+          ))}
+        </div>
+        <button
+          type="button"
+          onClick={() => setCompanyChoice(null)}
+          className="mx-auto mt-6 flex items-center gap-1.5 text-sm text-surface-500 hover:text-primary-600"
+        >
+          <LuArrowLeft className="size-4" /> Back to sign in
+        </button>
+      </div>
+    );
+  }
 
   if (mfa) {
     return (

@@ -2,12 +2,21 @@ import { request } from '@/api/client';
 import { tokenStorage } from '@/utils/storage';
 
 export const authService = {
-  /** Returns either { mfaRequired, mfaToken } or { accessToken, ..., user }. */
-  async login({ email, password }) {
+  /**
+   * Returns one of: { accessToken, ..., user } | { mfaRequired, mfaToken }
+   * | { multipleCompanies: true, companies: [...] }. Pass companyId to
+   * disambiguate when the same email+password exists in multiple companies.
+   */
+  async login({ email, password, companyId }) {
     const { data } = await request({
       method: 'POST',
       url: '/auth/login',
-      data: { email, password, deviceName: buildDeviceName() },
+      data: {
+        email,
+        password,
+        deviceName: buildDeviceName(),
+        ...(companyId ? { companyId } : {}),
+      },
     });
     if (data?.accessToken) tokenStorage.set(data);
     return data;
