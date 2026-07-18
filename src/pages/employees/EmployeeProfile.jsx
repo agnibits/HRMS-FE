@@ -7,13 +7,16 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import toast from 'react-hot-toast';
 import {
   LuMail, LuPhone, LuCalendarDays, LuShieldCheck, LuClock, LuCircleCheck, LuCircleX,
-  LuEllipsisVertical, LuPencilLine, LuIdCard, LuUserRoundX,
+  LuEllipsisVertical, LuPencilLine, LuIdCard, LuUserRoundX, LuMailPlus,
+  LuBuilding2, LuBriefcaseBusiness, LuUserRound, LuBadgeCheck,
 } from 'react-icons/lu';
 import { userService } from '@/services/userService';
 import { roleService } from '@/services/roleService';
 import { auditService } from '@/services/auditService';
+import { departmentService, designationService } from '@/services/modules';
+import { request } from '@/api/client';
 import { useAuth } from '@/hooks/useAuth';
-import { QUERY_KEYS, PERMISSIONS, USER_STATUSES, isTenantRole } from '@/constants';
+import { QUERY_KEYS, PERMISSIONS, USER_STATUSES, EMPLOYMENT_TYPES, isTenantRole } from '@/constants';
 import { fullName, formatDate, formatDateTime, formatRelative, titleCase, truncate } from '@/utils/formatters';
 import PageHeader from '@/components/layout/PageHeader';
 import { Card, CardHeader, CardBody } from '@/components/cards/Card';
@@ -29,7 +32,8 @@ import EmptyState from '@/components/common/EmptyState';
 import Modal from '@/components/modals/Modal';
 import ConfirmDialog from '@/components/modals/ConfirmDialog';
 import FormShell from '@/components/forms/FormShell';
-import { FormInput, FormNativeSelect } from '@/components/forms/fields';
+import { FormInput, FormNativeSelect, FormDate } from '@/components/forms/fields';
+import RemoteFormSelect from '@/components/forms/RemoteFormSelect';
 import LeaveBalanceCard from '@/components/leave/LeaveBalanceCard';
 import { useDisclosure } from '@/hooks/useDisclosure';
 
@@ -47,11 +51,17 @@ function InfoRow({ icon: Icon, label, value, title }) {
   );
 }
 
+const opt = z.string().optional().or(z.literal(''));
 const editSchema = z.object({
   firstName: z.string().min(1, 'First name is required').max(60),
   lastName: z.string().min(1, 'Last name is required').max(60),
   email: z.string().min(1, 'Email is required').email('Enter a valid email'),
-  phone: z.string().optional().or(z.literal('')),
+  phone: opt,
+  departmentId: opt,
+  designationId: opt,
+  managerId: opt,
+  joiningDate: opt,
+  employmentType: opt,
   status: z.enum(USER_STATUSES),
 });
 
@@ -95,7 +105,9 @@ export default function EmployeeProfile() {
   const editMutation = useMutation({
     mutationFn: (values) => {
       const payload = { ...values };
-      if (!payload.phone) delete payload.phone;
+      ['phone', 'departmentId', 'designationId', 'managerId', 'joiningDate', 'employmentType'].forEach((k) => {
+        if (!payload[k]) delete payload[k];
+      });
       return userService.update(id, payload);
     },
     onSuccess: () => {
@@ -104,6 +116,18 @@ export default function EmployeeProfile() {
       queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.users] });
     },
     onError: (err) => toast.error(err.message),
+  });
+
+  const resendInvite = useMutation({
+    mutationFn: () => request({ method: 'POST', url: `/users/${id}/resend-invite` }),
+    onSuccess: ({ data }) =>
+      toast.success(`Invitation resent${data?.email ? ` to ${data.email}` : ''}.`),
+    onError: (err) =>
+      toast.error(
+        err?.status === 404
+          ? 'Resend invite isn’t available on the server yet.'
+          : err.message
+      ),
   });
 
   const deleteMutation = useMutation({
@@ -130,6 +154,11 @@ export default function EmployeeProfile() {
       lastName: user.lastName || '',
       email: user.email || '',
       phone: user.phone || '',
+      departmentId: user.departmentId || '',
+      designationId: user.designationId || '',
+      managerId: user.managerId || '',
+      joiningDate: user.joiningDate ? user.joiningDate.slice(0, 10) : '',
+      employmentType: user.employmentType || '',
       status: user.status || 'ACTIVE',
     });
     editModal.open();
@@ -164,19 +193,30 @@ export default function EmployeeProfile() {
                 Edit
               </Button>
             )}
-            {canDelete && (
+            {(canUpdate || canDelete) && (
               <Dropdown
                 align="right"
                 width="w-56"
                 trigger={<IconButton icon={LuEllipsisVertical} label="More actions" variant="secondary" />}
                 items={[
-                  {
-                    key: 'deactivate',
-                    label: 'Deactivate employee',
-                    icon: LuUserRoundX,
-                    danger: true,
-                    onClick: () => deleteModal.open(),
-                  },
+                  ...(canUpdate
+                    ? [{
+                        key: 'resend',
+                        label: 'Resend invitation',
+                        icon: LuMailPlus,
+                        onClick: () => resendInvite.mutate(),
+                      }]
+                    : []),
+                  ...(canUpdate && canDelete ? [null] : []),
+                  ...(canDelete
+                    ? [{
+                        key: 'deactivate',
+                        label: 'Deactivate employee',
+                        icon: LuUserRoundX,
+                        danger: true,
+                        onClick: () => deleteModal.open(),
+                      }]
+                    : []),
                 ]}
               />
             )}
@@ -225,24 +265,37 @@ export default function EmployeeProfile() {
             {(active) => (
               <>
                 {active === 'overview' && (
-                  <Card>
-                    <CardHeader title="Account details" description="Identity, authentication and account lifecycle." />
-                    <CardBody className="grid grid-cols-1 gap-x-8 gap-y-5 sm:grid-cols-2">
-                      <InfoRow icon={LuIdCard} label="Employee ID" value={truncate(user.id, 14)} title={user.id} />
-                      <InfoRow
-                        icon={user.mfaEnabled ? LuCircleCheck : LuCircleX}
-                        label="Two-factor authentication"
-                        value={user.mfaEnabled ? 'Enabled' : 'Not enabled'}
-                      />
-                      <InfoRow
-                        icon={user.emailVerifiedAt ? LuCircleCheck : LuCircleX}
-                        label="Email verified"
-                        value={user.emailVerifiedAt ? formatDateTime(user.emailVerifiedAt) : 'Not verified'}
-                      />
-                      <InfoRow icon={LuShieldCheck} label="Created" value={formatDateTime(user.createdAt)} />
-                      <InfoRow icon={LuClock} label="Last updated" value={formatDateTime(user.updatedAt)} />
-                    </CardBody>
-                  </Card>
+                  <div className="space-y-6">
+                    <Card>
+                      <CardHeader title="Employment" description="Role and reporting details for this employee." />
+                      <CardBody className="grid grid-cols-1 gap-x-8 gap-y-5 sm:grid-cols-2">
+                        <InfoRow icon={LuIdCard} label="Employee ID" value={user.employeeId || truncate(user.id, 14)} title={user.id} />
+                        <InfoRow icon={LuBuilding2} label="Department" value={user.departmentName} />
+                        <InfoRow icon={LuBriefcaseBusiness} label="Designation" value={user.designationName} />
+                        <InfoRow icon={LuUserRound} label="Reports to" value={user.managerName} />
+                        <InfoRow icon={LuCalendarDays} label="Joining date" value={user.joiningDate ? formatDate(user.joiningDate) : null} />
+                        <InfoRow icon={LuBadgeCheck} label="Employment type" value={user.employmentType ? titleCase(user.employmentType) : null} />
+                      </CardBody>
+                    </Card>
+
+                    <Card>
+                      <CardHeader title="Account & security" description="Authentication and account lifecycle." />
+                      <CardBody className="grid grid-cols-1 gap-x-8 gap-y-5 sm:grid-cols-2">
+                        <InfoRow
+                          icon={user.mfaEnabled ? LuCircleCheck : LuCircleX}
+                          label="Two-factor authentication"
+                          value={user.mfaEnabled ? 'Enabled' : 'Not enabled'}
+                        />
+                        <InfoRow
+                          icon={user.emailVerifiedAt ? LuCircleCheck : LuCircleX}
+                          label="Email verified"
+                          value={user.emailVerifiedAt ? formatDateTime(user.emailVerifiedAt) : 'Not verified'}
+                        />
+                        <InfoRow icon={LuShieldCheck} label="Created" value={formatDateTime(user.createdAt)} />
+                        <InfoRow icon={LuClock} label="Last updated" value={formatDateTime(user.updatedAt)} />
+                      </CardBody>
+                    </Card>
+                  </div>
                 )}
 
                 {active === 'leave' && <LeaveBalanceCard employeeId={id} />}
@@ -346,6 +399,23 @@ export default function EmployeeProfile() {
               label="Status"
               options={USER_STATUSES.map((s) => ({ value: s, label: titleCase(s) }))}
             />
+            <RemoteFormSelect
+              form={form} name="departmentId" label="Department"
+              service={departmentService} toOption={(d) => ({ value: d.id, label: d.name })}
+            />
+            <RemoteFormSelect
+              form={form} name="designationId" label="Designation"
+              service={designationService} toOption={(d) => ({ value: d.id, label: d.title })}
+            />
+            <RemoteFormSelect
+              form={form} name="managerId" label="Reports to"
+              service={userService} toOption={(u) => ({ value: u.id, label: fullName(u) })}
+            />
+            <FormNativeSelect
+              form={form} name="employmentType" label="Employment type" placeholder="Select…"
+              options={EMPLOYMENT_TYPES.map((t) => ({ value: t, label: titleCase(t) }))}
+            />
+            <FormDate form={form} name="joiningDate" label="Joining date" className="sm:col-span-2" />
           </div>
         </FormShell>
       </Modal>

@@ -2,6 +2,7 @@ export const APP_NAME = import.meta.env.VITE_APP_NAME || 'Agnibits HRMS';
 export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000/api/v1';
 
 export const USER_STATUSES = ['PENDING', 'ACTIVE', 'SUSPENDED', 'DISABLED'];
+export const EMPLOYMENT_TYPES = ['FULL_TIME', 'PART_TIME', 'CONTRACT', 'INTERN'];
 
 /**
  * Platform-only roles that belong to Agnibits (the vendor), never to a tenant

@@ -6,8 +6,9 @@ import toast from 'react-hot-toast';
 import { LuUpload } from 'react-icons/lu';
 import { userService } from '@/services/userService';
 import { roleService } from '@/services/roleService';
-import { USER_STATUSES, PERMISSIONS, QUERY_KEYS, isTenantRole } from '@/constants';
-import { fullName, formatDate, formatRelative } from '@/utils/formatters';
+import { USER_STATUSES, EMPLOYMENT_TYPES, PERMISSIONS, QUERY_KEYS, isTenantRole } from '@/constants';
+import { fullName, formatDate, titleCase } from '@/utils/formatters';
+import { departmentField, designationField, managerField } from '@/components/forms/refFields';
 import ResourcePage from '@/components/common/ResourcePage';
 import Avatar from '@/components/common/Avatar';
 import { StatusChip } from '@/components/common/Badge';
@@ -16,11 +17,17 @@ import Button from '@/components/common/Button';
 import Modal from '@/components/modals/Modal';
 import FileUpload from '@/components/forms/FileUpload';
 
+const opt = z.string().optional().or(z.literal(''));
 const userSchema = z.object({
   firstName: z.string().min(1, 'First name is required').max(60),
   lastName: z.string().min(1, 'Last name is required').max(60),
   email: z.string().min(1, 'Email is required').email('Enter a valid email'),
-  phone: z.string().optional().or(z.literal('')),
+  phone: opt,
+  departmentId: opt,
+  designationId: opt,
+  managerId: opt,
+  joiningDate: opt,
+  employmentType: opt,
   password: z
     .string()
     .optional()
@@ -66,21 +73,29 @@ const columns = [
     },
   },
   {
+    accessorKey: 'departmentName',
+    header: 'Department',
+    enableSorting: false,
+    meta: { exportValue: (r) => r.departmentName || '' },
+    cell: ({ row }) => (
+      <div className="min-w-0">
+        <p className="truncate text-surface-700 dark:text-surface-200">{row.original.departmentName || '—'}</p>
+        {row.original.designationName && (
+          <p className="truncate text-xs text-surface-400">{row.original.designationName}</p>
+        )}
+      </div>
+    ),
+  },
+  {
     accessorKey: 'status',
     header: 'Status',
     cell: ({ getValue }) => <StatusChip status={getValue()} />,
   },
   {
-    accessorKey: 'lastLoginAt',
-    header: 'Last Active',
-    meta: { exportValue: (r) => r.lastLoginAt || '' },
-    cell: ({ getValue }) => <span className="text-surface-500 dark:text-surface-400">{formatRelative(getValue())}</span>,
-  },
-  {
-    accessorKey: 'createdAt',
+    accessorKey: 'joiningDate',
     header: 'Joined',
-    meta: { exportValue: (r) => r.createdAt },
-    cell: ({ getValue }) => formatDate(getValue()),
+    meta: { exportValue: (r) => r.joiningDate || r.createdAt },
+    cell: ({ row }) => formatDate(row.original.joiningDate || row.original.createdAt),
   },
 ];
 
@@ -115,8 +130,15 @@ export default function Employees() {
     { name: 'lastName', label: 'Last name', required: true },
     { name: 'email', label: 'Email address', type: 'email', required: true },
     { name: 'phone', label: 'Phone', placeholder: '+1 555 000 0000' },
+    // Employment
+    departmentField(),
+    designationField(),
+    managerField(),
+    { name: 'joiningDate', label: 'Joining date', type: 'date' },
+    { name: 'employmentType', label: 'Employment type', type: 'select', native: true, placeholder: 'Select…', options: EMPLOYMENT_TYPES.map((t) => ({ value: t, label: titleCase(t) })) },
+    // Access
     { name: 'roleIds', label: 'Roles', type: 'multiselect', options: roleOptions, colSpan: 2 },
-    { name: 'status', label: 'Status', type: 'select', native: true, options: USER_STATUSES.map((s) => ({ value: s, label: s })) },
+    { name: 'status', label: 'Status', type: 'select', native: true, options: USER_STATUSES.map((s) => ({ value: s, label: titleCase(s) })) },
     {
       name: 'password', label: 'Password', type: 'password', showOn: 'create',
       hint: 'Leave blank to auto-generate and email a temporary password.',
@@ -136,6 +158,7 @@ export default function Employees() {
         fields={fields}
         defaults={{
           firstName: '', lastName: '', email: '', phone: '',
+          departmentId: '', designationId: '', managerId: '', joiningDate: '', employmentType: '',
           status: 'ACTIVE', roleIds: [], password: '', sendWelcomeEmail: true,
         }}
         toEditValues={(row) => ({
@@ -143,6 +166,11 @@ export default function Employees() {
           lastName: row.lastName || '',
           email: row.email || '',
           phone: row.phone || '',
+          departmentId: row.departmentId || '',
+          designationId: row.designationId || '',
+          managerId: row.managerId || '',
+          joiningDate: row.joiningDate ? row.joiningDate.slice(0, 10) : '',
+          employmentType: row.employmentType || '',
           status: row.status || 'ACTIVE',
           roleIds: (row.roles || []).map((r) => r.id),
           password: '',
@@ -151,13 +179,17 @@ export default function Employees() {
         transformSubmit={(values, editing) => {
           const payload = { ...values };
           if (!payload.password) delete payload.password;
-          if (!payload.phone) delete payload.phone;
+          // Drop empty optionals so the backend doesn't get blank FK strings
+          ['phone', 'departmentId', 'designationId', 'managerId', 'joiningDate', 'employmentType'].forEach((k) => {
+            if (!payload[k]) delete payload[k];
+          });
           if (editing) delete payload.sendWelcomeEmail;
           return payload;
         }}
         filters={[
           { key: 'status', label: 'Status', options: USER_STATUSES },
           { key: 'roleId', label: 'Role', options: roleOptions },
+          { key: 'employmentType', label: 'Type', options: EMPLOYMENT_TYPES.map((t) => ({ value: t, label: titleCase(t) })) },
         ]}
         permissions={{
           create: PERMISSIONS.USER_CREATE,

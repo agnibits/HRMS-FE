@@ -1,5 +1,5 @@
 import { userService } from '@/services/userService';
-import { candidateService } from '@/services/modules';
+import { candidateService, departmentService, designationService } from '@/services/modules';
 import { fullName } from '@/utils/formatters';
 
 /**
@@ -31,6 +31,28 @@ export const userRefField = (name, label, overrides = {}) => ({
   remote: { service: userService, toOption: userOption },
   ...overrides,
 });
+
+/** Department picker → sends departmentId, links to the Departments module. */
+export const departmentField = (overrides = {}) => ({
+  name: 'departmentId',
+  label: 'Department',
+  type: 'remote',
+  remote: { service: departmentService, toOption: (d) => ({ value: d.id, label: d.name }) },
+  ...overrides,
+});
+
+/** Designation picker → sends designationId, links to the Designations module. */
+export const designationField = (overrides = {}) => ({
+  name: 'designationId',
+  label: 'Designation',
+  type: 'remote',
+  remote: { service: designationService, toOption: (d) => ({ value: d.id, label: d.title }) },
+  ...overrides,
+});
+
+/** Reporting manager picker → sends managerId. */
+export const managerField = (overrides = {}) =>
+  userRefField('managerId', 'Reports to', overrides);
 
 /** Candidate picker (recruitment). */
 export const candidateField = (overrides = {}) => ({
