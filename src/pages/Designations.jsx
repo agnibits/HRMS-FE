@@ -17,6 +17,11 @@ const LEVELS = [
   { value: 15, label: 'L15 – Executive / C-level' },
 ];
 
+// level number → readable band name (derived from the dropdown labels)
+const LEVEL_NAME = Object.fromEntries(
+  LEVELS.map((l) => [l.value, l.label.replace(/^L\d+\s*–\s*/, '')])
+);
+
 const schema = z.object({
   title: z.string().min(2, 'Title is required'),
   departmentId: z.string().optional().or(z.literal('')),
@@ -42,7 +47,12 @@ const columns = [
   {
     accessorKey: 'level',
     header: 'Level',
-    cell: ({ getValue }) => (getValue() ? <Badge color="primary">L{getValue()}</Badge> : <span className="text-surface-400">—</span>),
+    cell: ({ getValue }) => {
+      const lv = getValue();
+      if (!lv) return <span className="text-surface-400">—</span>;
+      const name = LEVEL_NAME[lv];
+      return <Badge color="primary">L{lv}{name ? ` · ${name}` : ''}</Badge>;
+    },
   },
   {
     accessorKey: 'employeeCount',
