@@ -1,6 +1,9 @@
 import { z } from 'zod';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import toast from 'react-hot-toast';
+import { LuPlay, LuCircleCheck } from 'react-icons/lu';
 import { onboardingService } from '@/services/modules';
-import { formatDate } from '@/utils/formatters';
+import { formatDate, titleCase } from '@/utils/formatters';
 import { useUserLookup } from '@/hooks/useUserLookup';
 import ResourcePage from '@/components/common/ResourcePage';
 import { StatusChip } from '@/components/common/Badge';
@@ -30,6 +33,17 @@ function ProgressBar({ value = 0 }) {
 
 export default function Onboarding() {
   const { nameOf } = useUserLookup();
+  const queryClient = useQueryClient();
+
+  // One-click lifecycle progression (status drives progress on the backend).
+  const setStatus = useMutation({
+    mutationFn: ({ id, status }) => onboardingService.update(id, { status }),
+    onSuccess: () => {
+      toast.success('Onboarding updated');
+      queryClient.invalidateQueries({ queryKey: ['onboarding'] });
+    },
+    onError: (err) => toast.error(err.message),
+  });
 
   const columns = [
     {
@@ -68,7 +82,7 @@ export default function Onboarding() {
       queryKey="onboarding"
       columns={columns}
       schema={schema}
-      defaults={{ employee: '', startDate: '', buddy: '', status: 'NOT_STARTED', notes: '' }}
+      defaults={{ employee: '', startDate: '', buddy: '', notes: '' }}
       fields={[
         employeeField({ label: 'New hire', hint: 'The reporting manager is inherited from this employee’s profile.' }),
         { name: 'startDate', label: 'Start date', type: 'date', required: true },
@@ -76,11 +90,27 @@ export default function Onboarding() {
           hint: 'A peer who helps the new hire settle in.',
           remote: { excludeField: 'employee' }, // can't be their own buddy
         }),
-        { name: 'status', label: 'Status', type: 'select', native: true, options: STATUSES.map((s) => ({ value: s, label: s.replace('_', ' ') })) },
         { name: 'notes', label: 'Notes', type: 'textarea', colSpan: 2 },
+        // Status is a lifecycle field — set it after creation (buttons below / edit),
+        // never at create time. A new onboarding always starts NOT_STARTED.
+        { name: 'status', label: 'Status', type: 'select', native: true, showOn: 'edit', options: STATUSES.map((s) => ({ value: s, label: titleCase(s) })) },
       ]}
+      toEditValues={(row) => ({
+        employee: row.employeeId || row.employee || '',
+        startDate: row.startDate ? row.startDate.slice(0, 10) : '',
+        buddy: row.buddy || '',
+        notes: row.notes || '',
+        status: row.status || 'NOT_STARTED',
+      })}
       filters={[{ key: 'status', label: 'Status', options: STATUSES }]}
       createLabel="Start Onboarding"
+      extraRowActions={(row) => {
+        if (row.status === 'NOT_STARTED')
+          return [{ icon: LuPlay, label: 'Start onboarding', onClick: () => setStatus.mutate({ id: row.id, status: 'IN_PROGRESS' }) }];
+        if (row.status === 'IN_PROGRESS')
+          return [{ icon: LuCircleCheck, label: 'Mark complete', onClick: () => setStatus.mutate({ id: row.id, status: 'COMPLETED' }) }];
+        return [];
+      }}
     />
   );
 }
