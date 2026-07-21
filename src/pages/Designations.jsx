@@ -1,12 +1,13 @@
 import { z } from 'zod';
 import { designationService } from '@/services/modules';
 import { formatDate } from '@/utils/formatters';
+import { departmentField } from '@/components/forms/refFields';
 import ResourcePage from '@/components/common/ResourcePage';
 import Badge from '@/components/common/Badge';
 
 const schema = z.object({
   title: z.string().min(2, 'Title is required'),
-  department: z.string().optional().or(z.literal('')),
+  departmentId: z.string().optional().or(z.literal('')),
   level: z.coerce.number().min(1, 'Level must be at least 1').max(15),
   description: z.string().max(300).optional().or(z.literal('')),
 });
@@ -17,7 +18,12 @@ const columns = [
     header: 'Designation',
     cell: ({ getValue }) => <span className="font-medium text-surface-900 dark:text-surface-100">{getValue()}</span>,
   },
-  { accessorKey: 'department', header: 'Department', cell: ({ getValue }) => getValue() || '—' },
+  {
+    accessorKey: 'departmentName',
+    header: 'Department',
+    enableSorting: false,
+    cell: ({ row }) => row.original.departmentName || <span className="text-surface-400">—</span>,
+  },
   {
     accessorKey: 'level',
     header: 'Level',
@@ -36,10 +42,15 @@ export default function Designations() {
       queryKey="designations"
       columns={columns}
       schema={schema}
-      defaults={{ title: '', department: '', level: 1, description: '' }}
+      defaults={{ title: '', departmentId: '', level: 1, description: '' }}
+      transformSubmit={(values) => {
+        const payload = { ...values };
+        if (!payload.departmentId) delete payload.departmentId;
+        return payload;
+      }}
       fields={[
         { name: 'title', label: 'Title', required: true, placeholder: 'e.g. Senior Software Engineer' },
-        { name: 'department', label: 'Department', placeholder: 'e.g. Engineering' },
+        departmentField({ hint: 'Optional — the department this role belongs to.' }),
         { name: 'level', label: 'Level', type: 'number', required: true, hint: '1 (junior) – 15 (executive)' },
         { name: 'description', label: 'Description', type: 'textarea', colSpan: 2 },
       ]}
