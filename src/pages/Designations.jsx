@@ -50,7 +50,7 @@ export default function Designations() {
       }}
       fields={[
         { name: 'title', label: 'Title', required: true, placeholder: 'e.g. Senior Software Engineer' },
-        departmentField({ hint: 'Optional — the department this role belongs to.' }),
+        departmentField({ hint: 'Optional — groups this title under a department. Each employee’s own department is set on their profile.' }),
         { name: 'level', label: 'Level', type: 'number', required: true, hint: '1 (junior) – 15 (executive)' },
         { name: 'description', label: 'Description', type: 'textarea', colSpan: 2 },
       ]}
