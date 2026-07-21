@@ -15,7 +15,7 @@ const schema = z.object({
   employee: z.string().min(1, 'Employee is required'),
   startDate: z.string().min(1, 'Start date is required'),
   buddy: z.string().optional().or(z.literal('')),
-  status: z.enum(STATUSES),
+  status: z.enum(STATUSES).optional(), // not set at create; defaults NOT_STARTED server-side
   notes: z.string().max(400).optional().or(z.literal('')),
 });
 
