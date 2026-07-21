@@ -72,7 +72,10 @@ export default function Onboarding() {
       fields={[
         employeeField({ label: 'New hire', hint: 'The reporting manager is inherited from this employee’s profile.' }),
         { name: 'startDate', label: 'Start date', type: 'date', required: true },
-        userRefField('buddy', 'Onboarding buddy', { hint: 'A peer who helps the new hire settle in.' }),
+        userRefField('buddy', 'Onboarding buddy', {
+          hint: 'A peer who helps the new hire settle in.',
+          remote: { excludeField: 'employee' }, // can't be their own buddy
+        }),
         { name: 'status', label: 'Status', type: 'select', native: true, options: STATUSES.map((s) => ({ value: s, label: s.replace('_', ' ') })) },
         { name: 'notes', label: 'Notes', type: 'textarea', colSpan: 2 },
       ]}

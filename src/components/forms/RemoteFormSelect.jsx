@@ -12,7 +12,7 @@ import { FormSelect } from './fields';
  */
 export function RemoteFormSelect({
   form, name, label, required, hint, className, placeholder,
-  service, params = {}, toOption, isMulti = false,
+  service, params = {}, toOption, isMulti = false, excludeField,
 }) {
   const query = useQuery({
     queryKey: [service.resource, 'ref-options', params],
@@ -21,9 +21,13 @@ export function RemoteFormSelect({
     retry: false,
   });
 
+  // Exclude the value currently held by another field (e.g. a person can't be
+  // their own onboarding buddy) so an invalid option can't be picked.
+  const excludeValue = excludeField ? form.watch(excludeField) : undefined;
+
   const options = useMemo(
-    () => (query.data?.data || []).map(toOption),
-    [query.data, toOption]
+    () => (query.data?.data || []).map(toOption).filter((o) => !excludeValue || o.value !== excludeValue),
+    [query.data, toOption, excludeValue]
   );
 
   return (

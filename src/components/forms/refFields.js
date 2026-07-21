@@ -23,13 +23,17 @@ export const employeeField = (overrides = {}) => ({
   ...overrides,
 });
 
-/** Any user-reference field (reviewer, requester, manager, assignee…). */
-export const userRefField = (name, label, overrides = {}) => ({
+/**
+ * Any user-reference field (reviewer, requester, manager, assignee…).
+ * Pass `remote: { excludeField: 'employee' }` in overrides to hide the value
+ * held by another field (e.g. a person can't be their own onboarding buddy).
+ */
+export const userRefField = (name, label, { remote: remoteOverride, ...rest } = {}) => ({
   name,
   label,
   type: 'remote',
-  remote: { service: userService, toOption: userOption },
-  ...overrides,
+  remote: { service: userService, toOption: userOption, ...remoteOverride },
+  ...rest,
 });
 
 /** Department picker → sends departmentId, links to the Departments module. */

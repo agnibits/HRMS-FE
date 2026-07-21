@@ -203,6 +203,7 @@ export function ResourcePage({
             service={f.remote.service}
             params={f.remote.params}
             toOption={f.remote.toOption}
+            excludeField={f.remote.excludeField}
             isMulti={f.multiple}
             placeholder={f.placeholder || 'Search…'}
           />
