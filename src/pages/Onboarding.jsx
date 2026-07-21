@@ -12,7 +12,6 @@ const schema = z.object({
   employee: z.string().min(1, 'Employee is required'),
   startDate: z.string().min(1, 'Start date is required'),
   buddy: z.string().optional().or(z.literal('')),
-  manager: z.string().optional().or(z.literal('')),
   status: z.enum(STATUSES),
   notes: z.string().max(400).optional().or(z.literal('')),
 });
@@ -44,7 +43,15 @@ export default function Onboarding() {
     },
     { accessorKey: 'startDate', header: 'Start Date', cell: ({ getValue }) => formatDate(getValue()) },
     { accessorKey: 'buddy', header: 'Buddy', cell: ({ row }) => nameOf(row.original.buddyName || row.original.buddy) },
-    { accessorKey: 'manager', header: 'Manager', cell: ({ row }) => nameOf(row.original.managerName || row.original.manager) },
+    {
+      accessorKey: 'manager',
+      header: 'Reporting Manager',
+      enableSorting: false,
+      cell: ({ row }) =>
+        row.original.managerName || row.original.manager
+          ? nameOf(row.original.managerName || row.original.manager)
+          : <span className="text-surface-400">—</span>,
+    },
     {
       accessorKey: 'progress',
       header: 'Checklist',
@@ -61,12 +68,11 @@ export default function Onboarding() {
       queryKey="onboarding"
       columns={columns}
       schema={schema}
-      defaults={{ employee: '', startDate: '', buddy: '', manager: '', status: 'NOT_STARTED', notes: '' }}
+      defaults={{ employee: '', startDate: '', buddy: '', status: 'NOT_STARTED', notes: '' }}
       fields={[
-        employeeField({ label: 'New hire' }),
+        employeeField({ label: 'New hire', hint: 'The reporting manager is inherited from this employee’s profile.' }),
         { name: 'startDate', label: 'Start date', type: 'date', required: true },
-        userRefField('buddy', 'Onboarding buddy'),
-        userRefField('manager', 'Reporting manager'),
+        userRefField('buddy', 'Onboarding buddy', { hint: 'A peer who helps the new hire settle in.' }),
         { name: 'status', label: 'Status', type: 'select', native: true, options: STATUSES.map((s) => ({ value: s, label: s.replace('_', ' ') })) },
         { name: 'notes', label: 'Notes', type: 'textarea', colSpan: 2 },
       ]}

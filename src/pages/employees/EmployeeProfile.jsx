@@ -272,7 +272,7 @@ export default function EmployeeProfile() {
                         <InfoRow icon={LuIdCard} label="Employee ID" value={user.employeeId || truncate(user.id, 14)} title={user.id} />
                         <InfoRow icon={LuBuilding2} label="Department" value={user.departmentName} />
                         <InfoRow icon={LuBriefcaseBusiness} label="Designation" value={user.designationName} />
-                        <InfoRow icon={LuUserRound} label="Reports to" value={user.managerName} />
+                        <InfoRow icon={LuUserRound} label="Reporting Manager" value={user.managerName} />
                         <InfoRow icon={LuCalendarDays} label="Joining date" value={user.joiningDate ? formatDate(user.joiningDate) : null} />
                         <InfoRow icon={LuBadgeCheck} label="Employment type" value={user.employmentType ? titleCase(user.employmentType) : null} />
                       </CardBody>
@@ -408,7 +408,7 @@ export default function EmployeeProfile() {
               service={designationService} toOption={(d) => ({ value: d.id, label: d.title })}
             />
             <RemoteFormSelect
-              form={form} name="managerId" label="Reports to"
+              form={form} name="managerId" label="Reporting Manager"
               service={userService} toOption={(u) => ({ value: u.id, label: fullName(u) })}
             />
             <FormNativeSelect

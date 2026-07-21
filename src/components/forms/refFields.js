@@ -52,7 +52,7 @@ export const designationField = (overrides = {}) => ({
 
 /** Reporting manager picker → sends managerId. */
 export const managerField = (overrides = {}) =>
-  userRefField('managerId', 'Reports to', overrides);
+  userRefField('managerId', 'Reporting Manager', overrides);
 
 /** Candidate picker (recruitment). */
 export const candidateField = (overrides = {}) => ({
