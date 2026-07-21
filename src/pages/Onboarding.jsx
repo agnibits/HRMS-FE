@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { useNavigate } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import { LuPlay, LuCircleCheck } from 'react-icons/lu';
@@ -19,19 +20,24 @@ const schema = z.object({
   notes: z.string().max(400).optional().or(z.literal('')),
 });
 
-function ProgressBar({ value = 0 }) {
-  const pct = Math.min(100, Math.max(0, Number(value) || 0));
+function ChecklistCell({ row }) {
+  const pct = Math.min(100, Math.max(0, Number(row.original.progress) || 0));
+  const done = row.original.tasksDone;
+  const total = row.original.tasksTotal;
   return (
     <div className="flex items-center gap-2">
       <div className="h-1.5 w-24 overflow-hidden rounded-full bg-surface-200 dark:bg-surface-700">
         <div className="h-full rounded-full bg-primary-600" style={{ width: `${pct}%` }} />
       </div>
-      <span className="text-xs text-surface-500">{pct}%</span>
+      <span className="whitespace-nowrap text-xs text-surface-500">
+        {total != null ? `${done ?? 0}/${total}` : `${pct}%`}
+      </span>
     </div>
   );
 }
 
 export default function Onboarding() {
+  const navigate = useNavigate();
   const { nameOf } = useUserLookup();
   const queryClient = useQueryClient();
 
@@ -69,7 +75,7 @@ export default function Onboarding() {
     {
       accessorKey: 'progress',
       header: 'Checklist',
-      cell: ({ getValue }) => <ProgressBar value={getValue()} />,
+      cell: ({ row }) => <ChecklistCell row={row} />,
     },
     { accessorKey: 'status', header: 'Status', cell: ({ getValue }) => <StatusChip status={getValue()} /> },
   ];
@@ -104,6 +110,7 @@ export default function Onboarding() {
       })}
       filters={[{ key: 'status', label: 'Status', options: STATUSES }]}
       createLabel="Start Onboarding"
+      onRowClick={(row) => navigate(`/onboarding/${row.id}`)}
       extraRowActions={(row) => {
         if (row.status === 'NOT_STARTED')
           return [{ icon: LuPlay, label: 'Start onboarding', onClick: () => setStatus.mutate({ id: row.id, status: 'IN_PROGRESS' }) }];

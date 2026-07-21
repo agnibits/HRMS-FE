@@ -16,6 +16,7 @@ const EmployeeProfile = lazy(() => import('@/pages/employees/EmployeeProfile'));
 const Departments = lazy(() => import('@/pages/Departments'));
 const Designations = lazy(() => import('@/pages/Designations'));
 const Onboarding = lazy(() => import('@/pages/Onboarding'));
+const OnboardingDetail = lazy(() => import('@/pages/OnboardingDetail'));
 const Attendance = lazy(() => import('@/pages/Attendance'));
 const Leave = lazy(() => import('@/pages/Leave'));
 const Holidays = lazy(() => import('@/pages/Holidays'));
@@ -69,6 +70,7 @@ export function AppRoutes() {
             <Route path="/departments" element={<Departments />} />
             <Route path="/designations" element={<Designations />} />
             <Route path="/onboarding" element={<Onboarding />} />
+            <Route path="/onboarding/:id" element={<OnboardingDetail />} />
 
             <Route path="/attendance" element={<Attendance />} />
             <Route path="/leave" element={<Leave />} />

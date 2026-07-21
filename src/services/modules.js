@@ -26,7 +26,14 @@ export const payrollService = createResourceService('payroll');
 export const jobService = createResourceService('jobs');
 export const candidateService = createResourceService('candidates');
 export const interviewService = createResourceService('interviews');
-export const onboardingService = createResourceService('onboarding');
+export const onboardingService = {
+  ...createResourceService('onboarding'),
+  // Checklist — every task mutation returns the full updated onboarding
+  // (progress + status + tasks), so callers can refresh from one response.
+  addTask: (id, title) => request({ method: 'POST', url: `/onboarding/${id}/tasks`, data: { title } }),
+  updateTask: (id, taskId, data) => request({ method: 'PATCH', url: `/onboarding/${id}/tasks/${taskId}`, data }),
+  deleteTask: (id, taskId) => request({ method: 'DELETE', url: `/onboarding/${id}/tasks/${taskId}` }),
+};
 export const performanceService = createResourceService('performance-reviews');
 export const goalService = createResourceService('goals');
 export const courseService = createResourceService('courses');
