@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { Link } from 'react-router-dom';
 import { designationService } from '@/services/modules';
 import { formatDate } from '@/utils/formatters';
 import { departmentField } from '@/components/forms/refFields';
@@ -43,7 +44,24 @@ const columns = [
     header: 'Level',
     cell: ({ getValue }) => (getValue() ? <Badge color="primary">L{getValue()}</Badge> : <span className="text-surface-400">—</span>),
   },
-  { accessorKey: 'employeeCount', header: 'Employees', cell: ({ getValue }) => getValue() ?? '—' },
+  {
+    accessorKey: 'employeeCount',
+    header: 'Employees',
+    cell: ({ row }) => {
+      const count = row.original.employeeCount ?? 0;
+      return count > 0 ? (
+        <Link
+          to={`/employees?designationId=${row.original.id}`}
+          onClick={(e) => e.stopPropagation()}
+          className="font-medium text-primary-600 hover:underline dark:text-primary-400"
+        >
+          {count} {count === 1 ? 'employee' : 'employees'}
+        </Link>
+      ) : (
+        <span className="text-surface-400">0</span>
+      );
+    },
+  },
   { accessorKey: 'createdAt', header: 'Created', cell: ({ getValue }) => formatDate(getValue()) },
 ];
 

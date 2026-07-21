@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
 import toast from 'react-hot-toast';
-import { LuUpload } from 'react-icons/lu';
+import { LuUpload, LuX } from 'react-icons/lu';
 import { userService } from '@/services/userService';
 import { roleService } from '@/services/roleService';
+import { designationService, departmentService } from '@/services/modules';
 import { USER_STATUSES, EMPLOYMENT_TYPES, PERMISSIONS, QUERY_KEYS, isTenantRole } from '@/constants';
 import { fullName, formatDate, titleCase } from '@/utils/formatters';
 import { departmentField, designationField, managerField } from '@/components/forms/refFields';
@@ -102,9 +103,37 @@ const columns = [
 export default function Employees() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const [searchParams] = useSearchParams();
   const [importOpen, setImportOpen] = useState(false);
   const [importFile, setImportFile] = useState(null);
   const [importResult, setImportResult] = useState(null);
+
+  // Deep-link filters (e.g. from Designations "N employees" → /employees?designationId=…)
+  const designationId = searchParams.get('designationId') || '';
+  const departmentId = searchParams.get('departmentId') || '';
+  const urlFilters = {
+    ...(designationId ? { designationId } : {}),
+    ...(departmentId ? { departmentId } : {}),
+  };
+  const hasUrlFilter = designationId || departmentId;
+
+  const desigQuery = useQuery({
+    queryKey: ['designations', designationId],
+    queryFn: () => designationService.get(designationId),
+    enabled: !!designationId,
+    retry: false,
+  });
+  const deptQuery = useQuery({
+    queryKey: ['departments', departmentId],
+    queryFn: () => departmentService.get(departmentId),
+    enabled: !!departmentId,
+    retry: false,
+  });
+  const filterLabel = designationId
+    ? desigQuery.data?.data?.title || 'this designation'
+    : departmentId
+      ? deptQuery.data?.data?.name || 'this department'
+      : null;
 
   const rolesQuery = useQuery({
     queryKey: [QUERY_KEYS.roles, 'options'],
@@ -146,9 +175,24 @@ export default function Employees() {
     { name: 'sendWelcomeEmail', label: 'Send welcome email with sign-in instructions', type: 'checkbox', showOn: 'create', colSpan: 2 },
   ];
 
+  const filterBanner = hasUrlFilter ? (
+    <div className="mb-4 flex items-center justify-between gap-3 rounded-lg border border-primary-200 bg-primary-50 px-4 py-2.5 text-sm dark:border-primary-900 dark:bg-primary-950/40">
+      <span className="text-primary-700 dark:text-primary-300">
+        Showing employees in <span className="font-semibold">{filterLabel}</span>
+      </span>
+      <button
+        onClick={() => navigate('/employees')}
+        className="flex items-center gap-1 font-medium text-primary-700 hover:underline dark:text-primary-300"
+      >
+        <LuX className="size-3.5" /> Clear filter
+      </button>
+    </div>
+  ) : null;
+
   return (
     <>
       <ResourcePage
+        key={designationId || departmentId || 'all'}
         title="Employees"
         description="Manage workforce accounts, roles and access."
         service={userService}
@@ -156,6 +200,8 @@ export default function Employees() {
         columns={columns}
         schema={userSchema}
         fields={fields}
+        initialFilters={hasUrlFilter ? urlFilters : undefined}
+        beforeTable={filterBanner}
         defaults={{
           firstName: '', lastName: '', email: '', phone: '',
           departmentId: '', designationId: '', managerId: '', joiningDate: '', employmentType: '',

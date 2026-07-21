@@ -65,10 +65,12 @@ export function ResourcePage({
   disableCreate = false,
   hideHeader = false,
   beforeTable = null,
+  initialFilters,
+  initialSorting,
 }) {
   const { hasPermission } = useAuth();
   const queryClient = useQueryClient();
-  const tableState = useTableState();
+  const tableState = useTableState({ filters: initialFilters, sorting: initialSorting });
   const formModal = useDisclosure();
   const deleteModal = useDisclosure();
 
